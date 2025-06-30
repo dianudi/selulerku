@@ -12,6 +12,7 @@ class Product extends Model
     use HasFactory;
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $with = ['category', 'user'];
 
     public function category(): BelongsTo
     {

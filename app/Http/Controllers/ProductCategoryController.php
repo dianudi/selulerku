@@ -26,7 +26,7 @@ class ProductCategoryController extends Controller
         $productCategory = new ProductCategory($request->validated());
         $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories') : null;
         $productCategory->save();
-        return redirect()->route('productCategories.index')->with('success', 'Product category created successfully.');
+        return redirect()->route('productcategories.index')->with('success', 'Product category created successfully.');
     }
 
 
@@ -35,10 +35,10 @@ class ProductCategoryController extends Controller
      */
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory)
     {
-        $productCategory->update(['name' => $request->input('name')]);
+        $productCategory->name = $request->input('name');
         $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories') : null;
         $productCategory->save();
-        return redirect()->route('productCategories.index')->with('success', 'Product category updated successfully.');
+        return redirect()->route('productcategories.index')->with('success', 'Product category updated successfully.');
     }
 
     /**
@@ -46,8 +46,8 @@ class ProductCategoryController extends Controller
      */
     public function destroy(ProductCategory $productCategory)
     {
-        if ($productCategory->products()->count() > 0) return redirect()->route('productCategories.index')->with('error', 'Product category cannot be deleted because it has associated products.');
+        if ($productCategory->products()->count() > 0) return redirect()->route('productcategories.index')->with('error', 'Product category cannot be deleted because it has associated products.');
         $productCategory->delete();
-        return redirect()->route('productCategories.index')->with('success', 'Product category deleted successfully.');
+        return redirect()->route('productcategories.index')->with('success', 'Product category deleted successfully.');
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +28,6 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard.index');
 
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
+    Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
+    Route::resource('products', ProductController::class);
 });
