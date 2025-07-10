@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResetPasswordController;
@@ -34,4 +35,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class)->except(['create', 'store']);
     Route::resource('servicehistories', ServiceHistoryController::class)->parameter('servicehistories', 'serviceHistory');
+    Route::resource('orders', OrderController::class)->parameter('orders', 'order');
 });
