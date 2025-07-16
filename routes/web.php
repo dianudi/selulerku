@@ -27,7 +27,7 @@ Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        return;
+        return view('dashboard.index');
     })->name('dashboard.index');
 
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
