@@ -3,9 +3,9 @@
 @section('content')
 <div class="w-full">
     <x-navbar />
-    <div class="flex">
+    <div class="flex relative">
         <x-sidebar />
-        <div class="flex-[1]"></div>
+        <div class="w-full"></div>
     </div>
 </div>
 @endsection

@@ -1,6 +1,9 @@
 <div class="navbar bg-base-100 shadow-sm">
-    <div class="flex-1">
-        <a class="btn btn-ghost text-xl">{{config('app.name')}}</a>
+    <div class="flex-1 flex items-center">
+        <div id="sidebarToggle" class="lg:hidden mr-2">
+            <i id="sidebarToggleIcon" class="bi bi-list text-2xl transition-all"></i>
+        </div>
+        <a class="btn btn-ghost text-xl">@yield('title')</a>
     </div>
     <div class="flex-none">
         <div class="dropdown dropdown-end hidden">
