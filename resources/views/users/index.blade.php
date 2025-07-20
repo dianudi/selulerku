@@ -60,6 +60,8 @@
                 @endforelse
 
             </ul>
+            {{$users->links()}}
+            {{-- list end --}}
 
             {{-- table start --}}
             <div class="hidden lg:block overflow-x-auto">

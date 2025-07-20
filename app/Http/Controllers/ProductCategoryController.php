@@ -24,8 +24,9 @@ class ProductCategoryController extends Controller
     public function store(StoreProductCategoryRequest $request)
     {
         $productCategory = new ProductCategory($request->validated());
-        $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories') : null;
+        $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories', 'public') : null;
         $productCategory->save();
+        if ($request->acceptsJson()) return response()->json(['message' => 'Product category created successfully.']);
         return redirect()->route('productcategories.index')->with('success', 'Product category created successfully.');
     }
 
@@ -36,8 +37,9 @@ class ProductCategoryController extends Controller
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory)
     {
         $productCategory->name = $request->input('name');
-        $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories') : null;
+        $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories', 'public') : null;
         $productCategory->save();
+        if ($request->acceptsJson()) return response()->json(['message' => 'Product category updated successfully.']);
         return redirect()->route('productcategories.index')->with('success', 'Product category updated successfully.');
     }
 
