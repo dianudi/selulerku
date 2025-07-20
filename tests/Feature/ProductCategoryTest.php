@@ -25,11 +25,16 @@ class ProductCategoryTest extends TestCase
     public function test_superadmin_can_store_product_category()
     {
         $this->actingAs(User::factory()->superadmin()->create());
-        $response = $this->post(route('productcategories.store'), ['name' => 'test', 'icon' => File::fake()->image('test.jpg')]);
+        $response = $this->post(route('productcategories.store'), ['name' => 'test', 'icon' => File::fake()->image('test.jpg')], ['accept' => 'text/html']);
         $response->assertStatus(302);
         $response->assertRedirect(route('productcategories.index'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('product_categories', ['name' => 'test']);
+        // json ajax
+        $response = $this->post(route('productcategories.store'), ['name' => 'test2', 'icon' => File::fake()->image('test.jpg')], ['accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Product category created successfully.']);
+        $this->assertDatabaseHas('product_categories', ['name' => 'test2']);
     }
 
     public function test_superadmin_cannot_store_product_category_with_invalid_data()
@@ -45,11 +50,16 @@ class ProductCategoryTest extends TestCase
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $productCategory = ProductCategory::factory()->create();
-        $response = $this->put(route('productcategories.update', $productCategory), ['name' => 'updated']);
+        $response = $this->put(route('productcategories.update', $productCategory), ['name' => 'updated'], ['accept' => 'text/html']);
         $response->assertStatus(302);
         $response->assertRedirect(route('productcategories.index'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('product_categories', ['name' => 'updated']);
+        // json ajax
+        $response = $this->put(route('productcategories.update', $productCategory), ['name' => 'updated2', 'icon' => File::fake()->image('test.jpg')], ['accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Product category updated successfully.']);
+        $this->assertDatabaseHas('product_categories', ['name' => 'updated2']);
     }
 
     public function test_superadmin_cannot_update_product_category_with_invalid_data()
