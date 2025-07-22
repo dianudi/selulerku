@@ -40,7 +40,7 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required',
-            'phone' => 'required',
+            'phone_number' => 'required',
             'address' => 'required',
         ]);
         $customer->update($validated);
