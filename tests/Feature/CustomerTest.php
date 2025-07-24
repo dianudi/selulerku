@@ -53,7 +53,7 @@ class CustomerTest extends TestCase
         $this->actingAs(User::factory()->create());
         $res = $this->put(route('customers.update', $customer), [
             'name' => 'John Doe',
-            'phone' => '1234567890',
+            'phone_number' => '1234567890',
             'address' => '123 Main St',
         ]);
         $res->assertRedirect(route('customers.index'));
