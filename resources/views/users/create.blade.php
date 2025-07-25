@@ -6,7 +6,7 @@
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
-            <div class="w-full">
+            <div class="w-full px-2">
                 <h1 class="text-lg md:text-2xl font-bold text-center">Create New User</h1>
                 <form action="{{route('users.store')}}" class="mx-auto block max-w-lg" method="post">
                     @csrf
