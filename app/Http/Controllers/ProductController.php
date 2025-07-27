@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +26,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $categories = ProductCategory::all();
+        return view('products.create', compact('categories'));
     }
 
     /**
@@ -37,7 +39,8 @@ class ProductController extends Controller
         $product->user_id = Auth::id();
         $product->image = $request->has('image') ? $request->image->store('products', 'public') : null;
         $product->save();
-        return redirect()->route('products.index')->with('success', 'Product created successfully');
+        if ($request->acceptsHtml()) return redirect()->route('products.index')->with('success', 'Product created successfully');
+        return response()->json(['message' => 'Product created successfully.']);
     }
 
     /**
@@ -66,7 +69,8 @@ class ProductController extends Controller
             $data['image'] = $request->image->store('products', 'public');
         }
         $product->update($data);
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        if ($request->acceptsHtml()) return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        return response()->json(['message' => 'Product updated successfully.']);
     }
 
     /**

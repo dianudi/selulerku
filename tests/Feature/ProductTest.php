@@ -50,11 +50,24 @@ class ProductTest extends TestCase
             'price' => 100,
             'image' => File::fake()->image('test.jpg'),
             'product_category_id' => ProductCategory::factory()->create()->id,
-        ]);
+        ], ['accept' => 'text/html']);
         $response->assertStatus(302);
         $response->assertRedirect(route('products.index'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('products', ['name' => 'test']);
+        // ajax
+        $response = $this->post(route('products.store'), [
+            'name' => 'testajax',
+            'description' => 'test',
+            'sku' => fake()->unique()->ean13(),
+            'quantity' => 10,
+            'price' => 100,
+            'image' => File::fake()->image('test.jpg'),
+            'product_category_id' => ProductCategory::factory()->create()->id,
+        ], ['accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Product created successfully.']);
+        $this->assertDatabaseHas('products', ['name' => 'testajax']);
     }
 
     public function test_user_cannot_store_product_with_invalid_data()
@@ -101,6 +114,19 @@ class ProductTest extends TestCase
         $response->assertRedirect(route('products.index'));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('products', ['name' => 'updated']);
+        // ajax
+        $response = $this->put(route('products.update', $product), [
+            'name' => 'updatedajax',
+            'description' => 'updated',
+            'sku' => fake()->unique()->ean13(),
+            'quantity' => 10,
+            'price' => 100,
+            'image' => File::fake()->image('test.jpg'),
+            'product_category_id' => ProductCategory::factory()->create()->id,
+        ], ['accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Product updated successfully.']);
+        $this->assertDatabaseHas('products', ['name' => 'updatedajax']);
     }
 
     public function test_user_cannot_update_product_with_invalid_data()
