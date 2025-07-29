@@ -86,8 +86,8 @@
             @empty
             <div class="text-center w-full text-lg">No products found</div>
             @endforelse
+            {{-- product list card end --}}
         </div>
-        {{-- product list card end --}}
     </div>
 </div>
 </div>
