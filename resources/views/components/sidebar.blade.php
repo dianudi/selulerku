@@ -1,5 +1,5 @@
 <div id="sidebar"
-        class="min-w-[200px] px-2 min-h-screen border-r border-slate-700 -ms-[280px] hidden transition-all lg:block lg:ms-0 absolute z-10 lg:relative bg-slate-900">
+        class="min-w-[200px] p-2 min-h-screen border-r border-slate-700 -ms-[280px] hidden transition-all lg:block lg:ms-0 absolute z-10 lg:relative bg-slate-900">
         <ul class="flex flex-col gap-1 w-full">
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('dashboard.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('dashboard.index') }}"><i class="bi bi-graph-up text-lg"></i>

@@ -2,10 +2,12 @@
 @section('title', 'Dashboard')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
-        <div class="w-full"></div>
+        <div class="w-full">
+            <x-navbar />
+
+        </div>
     </div>
 </div>
 @endsection

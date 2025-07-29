@@ -2,10 +2,10 @@
 @section('title', 'Create New Product')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
+            <x-navbar />
             <div class="w-full px-2">
                 <h1 class="text-lg md:text-2xl font-bold text-center">Create New Product</h1>
                 <form id="productForm" action="{{route('products.store')}}" class="mx-auto block max-w-lg"

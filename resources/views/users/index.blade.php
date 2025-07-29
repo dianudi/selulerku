@@ -2,10 +2,10 @@
 @section('title', 'Users Management')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
+            <x-navbar />
             <div class="flex justify-between">
                 <div class="stats shadow">
                     <div class="stat">

@@ -2,10 +2,10 @@
 @section('title', 'Product Management')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full px-2">
+            <x-navbar />
             {{-- stats start --}}
             <div class="stats shadow w-full">
                 <div class="stat place-items-center">

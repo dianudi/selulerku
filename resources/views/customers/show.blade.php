@@ -2,10 +2,10 @@
 @section('title', 'Customer Detail')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
+            <x-navbar />
             <div class="flex justify-between flex-wrap lg:flex-nowrap px-2">
                 <div class="flex justify-between items-center w-full lg:max-w-md">
                     <div>

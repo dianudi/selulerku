@@ -1,11 +1,11 @@
 @extends('templates.base')
-@section('title', 'Product Management')
+@section('title', 'Product Detail')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full px-2 mt-2 ">
+            <x-navbar />
             <div class="flex flex-wrap gap-2 justify-around ">
                 <div>
                     <img class="w-full max-w-xl rounded-2xl" src="{{asset('storage/'.$product->image)}}" alt="">

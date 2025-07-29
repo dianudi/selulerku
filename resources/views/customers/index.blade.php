@@ -2,10 +2,10 @@
 @section('title', 'Customer Management')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
+            <x-navbar />
             <div class="flex justify-between">
                 <div class="stats shadow">
                     <div class="stat">
@@ -51,7 +51,8 @@
                     <form action="{{route('customers.destroy', $customer->id)}}" method="post" class="inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-outline border-0 btn-error text-white block"><i
+                        <button type="submit" onclick="return confirm('Are you sure?')"
+                            class="btn btn-outline border-0 btn-error text-white block"><i
                                 class="bi bi-trash text-2xl"></i></button>
                     </form>
                 </li>
@@ -94,7 +95,7 @@
                                     class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
+                                    <button type="submit" onclick="return confirm('Are you sure?')"
                                         class="btn btn-xs btn-error border-0 h-full btn-outline text-white block"><i
                                             class="bi bi-trash text-2xl"></i></button>
                                 </form>

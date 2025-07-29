@@ -2,10 +2,10 @@
 @section('title', 'Update Customer')
 @section('content')
 <div class="w-full">
-    <x-navbar />
     <div class="flex relative">
         <x-sidebar />
         <div class="w-full">
+            <x-navbar />
             <div class="w-full">
                 <h1 class="text-lg md:text-2xl font-bold text-center">Update Customer</h1>
                 <form action="{{route('customers.update', ['customer' => $customer->id])}}"
