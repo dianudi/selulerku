@@ -45,13 +45,21 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User created successfully');
     }
 
+    public function activate(User $user)
+    {
+        $user->active = !$user->active;
+        $user->save();
+        return redirect()->route('users.index')->with('success', 'User status changed successfully');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user)
     {
-        // todo: add check for order history
+        if ($user->orders()->count() > 0 || $user->customers()->count() > 0 || $user->products()->count() > 0) {
+            return redirect()->route('users.index')->with('error', 'User cannot be deleted because it has associated products, customers or orders.');
+        }
         $user->delete();
         return redirect()->route('users.index')->with('success', 'User deleted successfully');
     }

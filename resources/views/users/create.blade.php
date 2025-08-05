@@ -29,6 +29,7 @@
                     <div class="my-1 text-sm font-bold">Role</div>
                     <select class="select w-full  @error('role') border-red-500 @enderror" name="role">
                         <option selected value="admin">Admin</option>
+                        <option value="cashier">Cashier</option>
                     </select>
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">Password</legend>

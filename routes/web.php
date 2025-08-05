@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard.index');
     })->name('dashboard.index');
-
+    Route::patch('/users/{user}/active', [UserController::class, 'activate'])->name('users.activate');
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
     Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
     Route::resource('products', ProductController::class);

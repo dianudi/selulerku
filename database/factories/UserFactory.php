@@ -49,4 +49,18 @@ class UserFactory extends Factory
             'role' => 'superadmin',
         ]);
     }
+
+    public function cashier(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'role' => 'cashier',
+        ]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'active' => false,
+        ]);
+    }
 }

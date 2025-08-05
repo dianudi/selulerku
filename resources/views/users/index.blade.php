@@ -41,18 +41,34 @@
                         <div>{{$user->name}}
                             @if ($user->role == 'superadmin')
                             <div class="badge badge-dash badge-warning">SuperAdmin</div>
+                            @elseif ($user->role == 'admin')
+                            <div class="badge badge-dash badge-primary">Admin</div>
+                            @elseif ($user->role == 'cashier')
+                            <div class="badge badge-dash badge-success">Cashier</div>
                             @endif
                         </div>
                         <div class="text-xs uppercase font-semibold opacity-60">{{$user->email}}</div>
                         <div class="text-xs opacity-60">{{$user->created_at->diffForHumans()}}
                         </div>
                     </div>
-                    <form action="#" method="post" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        {{-- todo: color change condition based on status --}}
-                        <button type="submit" class="btn btn-xs btn-error text-white block">Deactivate</button>
-                    </form>
+                    <div>
+                        <form action="{{route('users.activate', [$user->id])}}" method="post" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                class="btn btn-xs @if($user->active) btn-warning @else btn-success @endif  text-white block mb-2">@if($user->active)
+                                Deactivate @else Activate @endif</button>
+                        </form>
+                        @if($user->orders()->count() == 0 || $user->customers()->count() == 0 ||
+                        $user->products()->count() == 0)
+                        <form action="{{route('users.destroy', [$user->id])}}" method="post" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-xs btn-error  text-white block">Delete</button>
+                        </form>
+                        @endif
+
+                    </div>
                 </li>
 
                 @empty
@@ -73,6 +89,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Created At</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,11 +98,37 @@
                             <th>{{$loop->iteration}}</th>
                             <td>{{$user->name}} <div class="badge badge-soft badge-accent">Active</div>
                                 @if ($user->role == 'superadmin')
-                                <div class="badge badge-dash badge-warning">Super Admin</div>
+                                <div class="badge badge-dash badge-warning">SuperAdmin</div>
+                                @elseif ($user->role == 'admin')
+                                <div class="badge badge-dash badge-primary">Admin</div>
+                                @elseif ($user->role == 'cashier')
+                                <div class="badge badge-dash badge-success">Cashier</div>
                                 @endif
                             </td>
                             <td>{{$user->email}}</td>
                             <td>{{$user->created_at->diffForHumans()}}</td>
+                            <td>
+                                <div>
+                                    <form action="{{route('users.activate', [$user->id])}}" method="post"
+                                        class="inline">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit"
+                                            class="btn btn-xs @if($user->active) btn-warning @else btn-success @endif  text-white block mb-2">@if($user->active)
+                                            Deactivate @else Activate @endif</button>
+                                    </form>
+                                    @if($user->orders()->count() == 0 || $user->customers()->count() == 0 ||
+                                    $user->products()->count() == 0)
+                                    <form action="{{route('users.destroy', [$user->id])}}" method="post" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="btn btn-xs btn-error  text-white block">Delete</button>
+                                    </form>
+                                    @endif
+
+                                </div>
+                            </td>
                         </tr>
 
                         @empty

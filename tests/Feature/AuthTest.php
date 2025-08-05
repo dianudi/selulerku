@@ -38,6 +38,19 @@ class AuthTest extends TestCase
         $res->assertSessionHasErrors('email');
     }
 
+    public function test_inactive_user_cannot_login()
+    {
+        $user = User::factory()->inactive()->create();
+        $res = $this->post(route('auth.auth'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ], ['referer' => route('auth.login')]);
+        $res->assertRedirect(route('auth.login'));
+        $res->assertSessionHasErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
     public function test_user_can_logout()
     {
         $user = User::factory()->create();
