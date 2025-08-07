@@ -84,7 +84,8 @@
                         {{-- @enderror --}}
                         <div class="border max-w-24 min-h-24 max-h-24 mb-2">
                             <img id="modalPreviewProduct" class="w-full h-full object-cover object-center" id="preview"
-                                src="{{asset('storage/' . $product->image)}}" alt="preview">
+                                src="{{$product->image ? asset('storage/' . $product->image)  : 'https://img.icons8.com/liquid-glass/48/no-image.png'}}"
+                                alt="preview">
                         </div>
                     </fieldset>
 

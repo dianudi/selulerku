@@ -10,20 +10,27 @@
             <div class="stats shadow w-full">
                 <div class="stat place-items-center">
                     <div class="stat-title">Total Products</div>
-                    <div class="stat-value">31K</div>
-                    {{-- <div class="stat-desc">From January 1st to February 1st</div> --}}
+                    <div class="stat-value">{{$productCount}}</div>
+                    {{-- <div class="stat-desc"></div> --}}
                 </div>
 
                 <div class="stat place-items-center">
-                    <div class="stat-title">Sold</div>
-                    <div class="stat-value">4,200</div>
-                    <div class="stat-desc text-secondary">↗︎ 40 (2%)</div>
+                    <div class="stat-title">Sold Today</div>
+                    <div class="stat-value">{{$productSoldCountToday}}</div>
+                    <div class="stat-desc text-secondary">{{$productSoldCountToday - $productSoldCountYesterday}}
+                        ({{$productSoldCountToday == 0 && $productSoldCountYesterday == 0 ? 0 :
+                        round(($productSoldCountToday - $productSoldCountYesterday)
+                        / $productSoldCountToday *
+                        100)}}%)
+                    </div>
                 </div>
 
                 <div class="stat place-items-center">
-                    <div class="stat-title">Profit</div>
-                    <div class="stat-value">Rp. 1,200</div>
-                    <div class="stat-desc">↘︎ 90 (14%)</div>
+                    <div class="stat-title">Profit Today</div>
+                    <div class="stat-value">Rp. {{$productProfitToday}}</div>
+                    <div class="stat-desc">{{$productProfitToday - $productProfitYesterday}}
+                        ({{ $productProfitToday == 0 && $productProfitYesterday == 0 ? 0 : round(($productProfitToday -
+                        $productProfitYesterday) / $productProfitToday * 100)}}%)</div>
                 </div>
             </div>
             {{-- stats end --}}
@@ -58,13 +65,13 @@
                 @forelse ($products as $product)
                 <div class="card bg-base-100 w-56 shadow-sm">
                     <figure>
-                        <img src="{{$product->image ? asset('storage/'.$product->image) : 'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'}}"
+                        <img src="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
                             alt="{{$product->name}}" />
                     </figure>
                     <div class="card-body p-2">
                         <h2 class="card-title">
                             <a class="hover:underline"
-                                href="{{route('products.show', $product->id)}}">{{$product->name}}</a>
+                                href="{{route('products.edit', $product->id)}}">{{$product->name}}</a>
                             @if ($product->created_at->diffInDays() < 7) <div
                                 class="badge badge-secondary badge-outline text-xs">New
                     </div>

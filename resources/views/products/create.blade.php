@@ -19,7 +19,7 @@
                         </div>
                         <select name="product_category_id"
                             class="select w-full @error('product_category_id') border-red-500 @enderror">
-                            <option disabled selected>Pick a browser</option>
+                            <option disabled selected>Pick a Category</option>
                             @foreach ($categories as $category)
                             <option value="{{$category->id}}">{{$category->name}}</option>
                             @endforeach

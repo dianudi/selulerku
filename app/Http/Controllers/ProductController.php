@@ -17,8 +17,27 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        $productCount = Product::count();
+        $productSoldCountToday = Product::whereHas('orderDetails')->where('created_at', '>=', now()->startOfDay())->count();
+        $productSoldCountYesterday = Product::whereHas('orderDetails')->where('created_at', '>=', now()->startOfDay()->subDay())->count();
+        $productProfitToday = Product::whereHas('orderDetails', function ($query) {
+            $query->where('created_at', '>=', now()->startOfDay());
+        })->with(['orderDetails' => function ($query) {
+            $query->where('created_at', '>=', now()->startOfDay());
+        }])->get()->sum(function ($product) {
+            return $product->orderDetails->sum('immutable_price');
+        });
+        $productProfitYesterday = Product::whereHas('orderDetails', function ($query) {
+            $query->where('created_at', '>=', now()->startOfDay()->subDay())
+                ->where('created_at', '<', now()->startOfDay());
+        })->with(['orderDetails' => function ($query) {
+            $query->where('created_at', '>=', now()->startOfDay()->subDay())
+                ->where('created_at', '<', now()->startOfDay());
+        }])->get()->sum(function ($product) {
+            return $product->orderDetails->sum('immutable_price');
+        });
         $products = $request->has('search') ? Product::where('name', 'like', '%' . $request->search . '%')->paginate(15) : Product::paginate(15);
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'productCount', 'productSoldCountToday', 'productSoldCountYesterday', 'productProfitToday', 'productProfitYesterday'));
     }
 
     /**
