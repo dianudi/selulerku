@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
     Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
     Route::resource('products', ProductController::class);
-    Route::resource('customers', CustomerController::class)->except(['create', 'store']);
+    Route::resource('customers', CustomerController::class)->except(['create',]);
     Route::resource('servicehistories', ServiceHistoryController::class)->parameter('servicehistories', 'serviceHistory');
     Route::resource('orders', OrderController::class)->parameter('orders', 'order');
 });

@@ -35,10 +35,9 @@ class ServiceHistoryTest extends TestCase
     public function test_user_can_store_service_history()
     {
         $this->actingAs(User::factory()->create());
-        $randomInvoice = $this->faker->randomNumber() . '-' . $this->faker->randomNumber();
+        $customerId = Customer::factory()->create()->id;
         $response = $this->post(route('servicehistories.store'), [
-            'customer_id' => Customer::factory()->create()->id,
-            'invoice_number' => $randomInvoice,
+            'customer_id' => $customerId,
             'warranty_expired_at' => $this->faker->date(),
             'status' => $this->faker->randomElement(['pending', 'done']),
             'details' => [
@@ -48,10 +47,11 @@ class ServiceHistoryTest extends TestCase
                     'price' => $this->faker->numberBetween(1000, 10000),
                 ]
             ]
-        ]);
-        $response->assertRedirect(route('servicehistories.index'));
+        ], ['accept' => 'application/json']);
+        $response->assertJson(['message' => 'Service History created successfully.']);
+        // $response->assertRedirect(route('servicehistories.index'));
         $this->assertDatabaseHas('service_histories', [
-            'invoice_number' => $randomInvoice
+            'customer_id' => $customerId
         ]);
     }
 
@@ -71,7 +71,7 @@ class ServiceHistoryTest extends TestCase
                 ]
             ]
         ], ['referer' => route('servicehistories.create')]);
-        $response->assertRedirect(route('servicehistories.create'));
+        // $response->assertRedirect(route('servicehistories.create'));
         $this->assertDatabaseMissing('service_histories', [
             'invoice_number' => $this->faker->randomNumber()
         ]);

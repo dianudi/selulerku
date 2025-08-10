@@ -29,6 +29,21 @@ class CustomerTest extends TestCase
         $res->assertViewIs('customers.index');
     }
 
+    public function test_user_can_store_customer()
+    {
+        $this->actingAs(User::factory()->create());
+        $res = $this->post(route('customers.store'), [
+            'name' => 'John Doe',
+            'phone_number' => '1234567890',
+            'address' => '123 Main St',
+        ], ['accept' => 'application/json']);
+        $res->assertStatus(200);
+        $res->assertJsonStructure(['message', 'customer']);
+        $this->assertDatabaseHas('customers', [
+            'name' => 'John Doe',
+        ]);
+    }
+
     public function test_user_can_visit_customer_page()
     {
         $customer = Customer::factory()->create();

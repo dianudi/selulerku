@@ -23,7 +23,6 @@ class StoreServiceHistoryRequest extends FormRequest
     {
         return [
             'customer_id' => 'required|integer|exists:customers,id',
-            'invoice_number' => 'required|string|unique:service_histories,invoice_number',
             'warranty_expired_at' => 'required|date',
             'status' => 'required|string|in:pending,on_process,done',
             'details' => 'required|array',

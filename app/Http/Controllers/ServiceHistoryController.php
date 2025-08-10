@@ -35,7 +35,7 @@ class ServiceHistoryController extends Controller
         $data = $request->validated();
         $serviceHistory = new ServiceHistory([
             'customer_id' => $data['customer_id'],
-            'invoice_number' => $data['invoice_number'],
+            'invoice_number' => 'INV-' . $data['customer_id'] . '-' . now()->format('Y/m/d') . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
             'warranty_expired_at' => $data['warranty_expired_at'],
             'status' => $data['status']
         ]);
@@ -49,7 +49,8 @@ class ServiceHistoryController extends Controller
             ];
         })->toArray());
 
-        return redirect()->route('servicehistories.index')->with('success', 'Service History created successfully');
+        // if ($request->acceptsHtml()) return redirect()->route('servicehistories.index')->with('success', 'Service History created successfully');
+        return response()->json(['message' => 'Service History created successfully.']);
     }
 
     /**
