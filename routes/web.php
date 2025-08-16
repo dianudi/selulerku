@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -26,9 +27,7 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetFor
 Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard.index');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
     Route::patch('/users/{user}/active', [UserController::class, 'activate'])->name('users.activate');
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
     Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
