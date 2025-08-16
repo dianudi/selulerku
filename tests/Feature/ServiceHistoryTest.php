@@ -113,8 +113,9 @@ class ServiceHistoryTest extends TestCase
                     'price' => $this->faker->numberBetween(1000, 10000),
                 ]
             ]
-        ]);
-        $response->assertRedirect(route('servicehistories.index'));
+        ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Service History updated successfully.']);
         $this->assertDatabaseHas('service_histories', [
             'total_revision' => $totalRevision,
         ]);
@@ -134,8 +135,8 @@ class ServiceHistoryTest extends TestCase
                     'price' => $this->faker->numberBetween(1000, 10000),
                 ]
             ]
-        ], ['referer' => route('servicehistories.edit', $serviceHistory->id)]);
-        $response->assertRedirect(route('servicehistories.index'));
+        ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
+        $response->assertStatus(200);
         $this->assertDatabaseMissing('service_histories', [
             'total_revision' => $this->faker->randomNumber(),
         ]);

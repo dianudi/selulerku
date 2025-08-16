@@ -201,7 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         // Add first detail on page load
-        addDetail();
+        if (window.location.pathname === "/servicehistories/create")
+            addDetail();
 
         addDetailBtn.addEventListener("click", addDetail);
 

@@ -15,8 +15,21 @@ class ServiceHistoryController extends Controller
      */
     public function index(Request $request)
     {
-        $serviceHistories = $request->has('search') ? ServiceHistory::where('name', 'like', '%' . $request->search . '%')->paginate(10) : ServiceHistory::paginate(10);
-        return view('serviceHistories.index', compact('serviceHistories'));
+        $serviceHistories = ServiceHistory::with('customer', 'details');
+
+        if ($request->has('search')) {
+            $serviceHistories->whereHas('customer', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            })->orWhere('invoice_number', 'like', '%' . $request->search . '%');
+        }
+
+        $serviceHistories = $serviceHistories->paginate(10);
+
+        $pendingCount = ServiceHistory::where('status', 'pending')->count();
+        $onProcessCount = ServiceHistory::where('status', 'on_process')->count();
+        $doneCount = ServiceHistory::where('status', 'done')->count();
+
+        return view('serviceHistories.index', compact('serviceHistories', 'pendingCount', 'onProcessCount', 'doneCount'));
     }
 
     /**
@@ -87,7 +100,7 @@ class ServiceHistoryController extends Controller
                 'price' => $detail['price']
             ];
         })->toArray());
-        return redirect()->route('servicehistories.index')->with('success', 'Service History updated successfully');
+        return response()->json(['message' => 'Service History updated successfully.']);
     }
 
     /**

@@ -18,4 +18,15 @@ class ServiceHistory extends Model
     {
         return $this->hasMany(ServiceDetail::class);
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+    protected function casts(): array
+    {
+        return [
+            'warranty_expired_at' => 'datetime',
+        ];
+    }
 }
