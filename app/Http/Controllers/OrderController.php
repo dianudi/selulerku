@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -34,19 +35,40 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        $order = new Order($request->validated());
-        $order->user_id = Auth::id();
-        $order->invoice_number = 'INVOICE/' . now()->format('Y/m/d') . '/' . rand(1000, 9999) . '/' . rand(1000, 9999) . '/' . $request->input('customer_id');
-        $order->save();
-        $order->details()->createMany(
-            collect($request->input('details'))->map(function ($detail) {
-                return [
-                    'product_id' => $detail['product_id'],
-                    'quantity' => $detail['quantity'],
-                    'immutable_price' => Product::select('price')->where('id', $detail['product_id'])->first()->price
-                ];
-            })
-        );
+        try {
+            DB::transaction(function () use ($request) {
+                $order = new Order($request->validated());
+                $order->user_id = Auth::id();
+                $order->invoice_number = 'INVOICE/' . now()->format('Y/m/d') . '/' . rand(1000, 9999) . '/' . rand(1000, 9999) . '/' . $request->input('customer_id');
+                $order->save();
+
+                $details = [];
+                foreach ($request->input('details') as $detail) {
+                    // Lock the product row to prevent race conditions
+                    $product = Product::where('id', $detail['product_id'])->lockForUpdate()->first();
+
+                    // Check if there is enough quantity
+                    if ($product->quantity < $detail['quantity']) {
+                        // This will automatically trigger a rollback
+                        throw new \Exception('Not enough stock for product ' . $product->name);
+                    }
+
+                    $product->quantity -= $detail['quantity'];
+                    $product->save();
+
+                    $details[] = [
+                        'product_id' => $detail['product_id'],
+                        'quantity' => $detail['quantity'],
+                        'immutable_price' => $product->price
+                    ];
+                }
+
+                $order->details()->createMany($details);
+            });
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+
         return redirect()->route('orders.index')->with('success', 'Order created successfully');
     }
 
