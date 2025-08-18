@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +19,15 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         // todo : retrieve all if user is super admin
-        $orders = $request->has('search') ? Order::where('invoice_number', 'like', '%' . $request->search . '%')->where('user_id', Auth::id())->paginate(15) : Order::where('user_id', Auth::id())->paginate(15);
-        return view('orders.index', compact('orders'));
+        $orders = $request->has('search') ? Order::where('invoice_number', 'like', '%' . $request->search . '%')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(15) : Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(15);
+
+        $userOrders = Order::where('user_id', Auth::id());
+        $totalRevenue = OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_price');
+        $totalOrders = $userOrders->clone()->count();
+        $unpaidOrders = $userOrders->clone()->where('status', 'unpaid')->count();
+        $paidOrders = $userOrders->clone()->where('status', 'paid')->count();
+
+        return view('orders.index', compact('orders', 'totalRevenue', 'totalOrders', 'unpaidOrders', 'paidOrders'));
     }
 
     /**
@@ -59,7 +67,7 @@ class OrderController extends Controller
                     $details[] = [
                         'product_id' => $detail['product_id'],
                         'quantity' => $detail['quantity'],
-                        'immutable_price' => $product->price
+                        'immutable_price' => $product->price * $detail['quantity']
                     ];
                 }
 
@@ -114,10 +122,17 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        // todo: add check days
-        // if (now()->diffInDays($order->created_at) < 1) return redirect()->route('orders.index')->with('error', 'Order cannot be deleted because it was paid after 1 day of creation.');
+        if ($order->created_at->isPast() && now()->diffInDays($order->created_at) > 0) {
+            return back()->with('error', 'Order cannot be deleted');
+        }
+
+        foreach ($order->details as $detail) {
+            Product::where('id', $detail->product_id)->increment('quantity', $detail->quantity);
+        }
+
         $order->details()->delete();
         $order->delete();
+
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully');
     }
 }
