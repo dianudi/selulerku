@@ -93,7 +93,17 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        return view('orders.edit', compact('order'));
+        $cartData = $order->details->map(function ($detail) {
+            return [
+                'id' => $detail->product_id,
+                'name' => $detail->product->name,
+                'price' => $detail->product->price,
+                'quantity' => $detail->quantity,
+                'image' => $detail->product->image ? asset('storage/' . $detail->product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png',
+            ];
+        });
+
+        return view('orders.edit', compact('order', 'cartData'));
     }
 
     /**
@@ -101,19 +111,45 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        $order->update([
-            'status' => $request->input('status')
-        ]);
-        $order->details()->delete();
-        $order->details()->createMany(
-            collect($request->input('details'))->map(function ($detail) {
-                return [
-                    'product_id' => $detail['product_id'],
-                    'quantity' => $detail['quantity'],
-                    'immutable_price' => Product::select('price')->where('id', $detail['product_id'])->first()->price
-                ];
-            })
-        );
+        try {
+            DB::transaction(function () use ($request, $order) {
+                foreach ($order->details as $oldDetail) {
+                    Product::where('id', $oldDetail->product_id)->increment('quantity', $oldDetail->quantity);
+                }
+                $order->details()->delete();
+                $order->update($request->validated());
+
+                $newDetailsData = [];
+                if ($request->has('details')) {
+                    foreach ($request->input('details') as $detail) {
+                        // Lock product for update to prevent race conditions
+                        $product = Product::where('id', $detail['product_id'])->lockForUpdate()->first();
+
+                        // Check for sufficient stock
+                        if (!$product || $product->quantity < $detail['quantity']) {
+                            throw new \Exception('Not enough stock for product: ' . ($product->name ?? 'Unknown'));
+                        }
+
+                        // Decrement stock
+                        $product->decrement('quantity', $detail['quantity']);
+
+                        // Prepare new detail data
+                        $newDetailsData[] = [
+                            'product_id' => $detail['product_id'],
+                            'quantity' => $detail['quantity'],
+                            'immutable_price' => $product->price * $detail['quantity'],
+                        ];
+                    }
+                }
+
+                if (!empty($newDetailsData)) {
+                    $order->details()->createMany($newDetailsData);
+                }
+            });
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Error updating order: ' . $th->getMessage())->withInput();
+        }
+
         return redirect()->route('orders.index')->with('success', 'Order updated successfully');
     }
 
@@ -122,8 +158,9 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        if ($order->created_at->isPast() && now()->diffInDays($order->created_at) > 0) {
-            return back()->with('error', 'Order cannot be deleted');
+        // Only allow deletion if the order was created today.
+        if (!$order->created_at->isToday()) {
+            return back()->with('error', 'Order can only be deleted on the same day it was created.');
         }
 
         foreach ($order->details as $detail) {

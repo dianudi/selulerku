@@ -19,6 +19,17 @@
                 </div>
             </div>
 
+            @if (session()->has('error'))
+            <div role="alert" class="alert alert-error">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{session('error')}}</span>
+            </div>
+            @endif
+
             {{-- Order Details Card --}}
             <div class="card bg-base-100 shadow-md mb-4">
                 <div class="card-body">
@@ -79,10 +90,11 @@
                                         </div>
                                     </td>
                                     <td class="text-center">{{ $detail->quantity }}</td>
+                                    <td class="text-right">Rp. {{ number_format($detail->immutable_price /
+                                        $detail->quantity, 0, ',', '.')
+                                        }}</td>
                                     <td class="text-right">Rp. {{ number_format($detail->immutable_price, 0, ',', '.')
                                         }}</td>
-                                    <td class="text-right">Rp. {{ number_format($detail->immutable_price *
-                                        $detail->quantity, 0, ',', '.') }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -90,8 +102,7 @@
                                 <tr>
                                     <th colspan="3" class="text-right text-lg">Total</th>
                                     <th class="text-right text-lg">Rp. {{
-                                        number_format($order->details->sum(function($d) { return $d->immutable_price *
-                                        $d->quantity; }), 0, ',', '.') }}</th>
+                                        number_format($order->details->sum('immutable_price'), 0, ',', '.') }}</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -105,10 +116,10 @@
                     <i class="bi bi-printer"></i>
                     Print Invoice
                 </a>
-                @if ($order->status == 'unpaid')
+                @if ($order->status != 'canceled')
                 <a href="{{ route('orders.edit', $order) }}" class="btn btn-primary">
-                    <i class="bi bi-credit-card"></i>
-                    Process Payment
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Order
                 </a>
                 @endif
 

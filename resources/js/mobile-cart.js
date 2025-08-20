@@ -1,6 +1,8 @@
 const cartButton = document.getElementById("cart-button");
 const cartModal = document.getElementById("cart_modal");
-const modalBox = cartModal.querySelector(".modal-box");
+if (cartModal) {
+    const modalBox = cartModal.querySelector(".modal-box");
+}
 const cartSidebarContainer = document.getElementById("cart-sidebar-container");
 
 const cartContent = document.getElementById("cart");
@@ -13,15 +15,19 @@ const handleMobileCart = () => {
         }
     } else {
         // On desktop, move cart back to sidebar
-        if (!cartSidebarContainer.contains(cartContent)) {
+        if (
+            cartSidebarContainer &&
+            !cartSidebarContainer.contains(cartContent)
+        ) {
             cartSidebarContainer.appendChild(cartContent);
         }
     }
 };
 
-cartButton.addEventListener("click", () => {
-    cartModal.showModal();
-});
+if (cartButton)
+    cartButton.addEventListener("click", () => {
+        cartModal.showModal();
+    });
 
 // Run on initial load
 handleMobileCart();

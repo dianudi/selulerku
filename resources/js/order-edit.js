@@ -3,55 +3,47 @@ const cartSubtotalElement = document.getElementById("cart-subtotal");
 const cartTotalElement = document.getElementById("cart-total");
 const checkoutButton = document.getElementById("checkout");
 const emptyCartMessage = document.getElementById("empty-cart-message");
-const resetButton = document.getElementById("reset-cart-button");
 
-const getCart = () => {
-    const cart = localStorage.getItem("shopping_cart");
-    return cart ? JSON.parse(cart) : [];
-};
+let currentCart = [];
 
 const saveCart = (cart) => {
-    localStorage.setItem("shopping_cart", JSON.stringify(cart));
+    currentCart = cart;
     renderCart();
 };
 
-const addToCart = (product) => {
-    const cart = getCart();
-    const existingProduct = cart.find((item) => item.id === product.id);
-    if (existingProduct) {
-        existingProduct.quantity++;
-    } else {
-        cart.push({ ...product, quantity: 1 });
-    }
-    saveCart(cart);
-};
-
 const updateQuantity = (productId, change) => {
-    let cart = getCart();
-    const product = cart.find((item) => item.id === productId);
+    let cart = [...currentCart];
+    const product = cart.find((item) => item.id == productId);
     if (product) {
         product.quantity += change;
         if (product.quantity <= 0) {
-            cart = cart.filter((item) => item.id !== productId);
+            cart = cart.filter((item) => item.id != productId);
         }
     }
     saveCart(cart);
 };
 
 const removeFromCart = (productId) => {
-    let cart = getCart();
-    cart = cart.filter((item) => item.id !== productId);
+    let cart = [...currentCart];
+    cart = cart.filter((item) => item.id != productId);
     saveCart(cart);
 };
 
 const resetCart = () => {
-    localStorage.removeItem("shopping_cart");
-    renderCart();
+    const editPageContainer = document.getElementById("order-edit-page");
+    if (editPageContainer && editPageContainer.dataset.orderDetails) {
+        const initialCartData = JSON.parse(
+            editPageContainer.dataset.orderDetails
+        );
+        saveCart(initialCartData);
+    }
 };
 
 const renderCart = () => {
-    const cart = getCart();
-    if (cartItemsContainer) cartItemsContainer.innerHTML = "";
+    const cart = currentCart;
+    if (!cartItemsContainer) return;
+
+    cartItemsContainer.innerHTML = "";
 
     if (cart.length === 0) {
         if (emptyCartMessage) emptyCartMessage.classList.remove("hidden");
@@ -64,14 +56,14 @@ const renderCart = () => {
     if (checkoutButton) checkoutButton.disabled = false;
 
     let subtotal = 0;
-
     let index = 0;
+
     cart.forEach((item) => {
         const li = document.createElement("li");
         li.className = "list-row items-center";
         li.innerHTML = `
                 <input type="hidden" name="details[${index}][product_id]" value="${item.id}">
-                <div><img class="size-15 rounded-box" src="${item.image}" /></div>
+                <div><img class="size-15 rounded-box" src="${item.image}" alt="${item.name}"/></div>
                 <div>
                     <div>${item.name}</div>
                     <div class="text-xs uppercase font-semibold opacity-60">Rp. ${item.price}</div>
@@ -85,7 +77,7 @@ const renderCart = () => {
                     <i class="bi bi-trash text-lg"></i>
                 </button>
             `;
-        if (cartItemsContainer) cartItemsContainer.appendChild(li);
+        cartItemsContainer.appendChild(li);
         subtotal += item.price * item.quantity;
         index++;
     });
@@ -94,7 +86,7 @@ const renderCart = () => {
 };
 
 const updateTotals = (subtotal) => {
-    const total = subtotal; // Add logic for tax or shipping if needed
+    const total = subtotal;
     if (cartSubtotalElement)
         cartSubtotalElement.textContent = `Rp. ${subtotal.toLocaleString(
             "id-ID"
@@ -103,41 +95,33 @@ const updateTotals = (subtotal) => {
         cartTotalElement.textContent = `Rp. ${total.toLocaleString("id-ID")}`;
 };
 
-// Event Listeners
-document.querySelectorAll(".add-to-cart").forEach((button) => {
-    button.addEventListener("click", (e) => {
-        const product = {
-            id: e.currentTarget.dataset.id,
-            name: e.currentTarget.dataset.productName,
-            price: parseFloat(e.currentTarget.dataset.productPrice),
-            image: e.currentTarget.dataset.productImage,
-        };
-        addToCart(product);
-    });
-});
+// --- MASTER EVENT LISTENER ATTACHED TO THE DOCUMENT ---
+document.addEventListener("click", (e) => {
+    const target = e.target;
 
-if (cartItemsContainer)
-    cartItemsContainer.addEventListener("click", (e) => {
-        const target = e.target.closest("button");
-        if (!target) return;
+    // Case 1: A button inside the cart items list
+    const cartButton = target.closest("#cart-items button");
+    if (cartButton) {
+        const productId = cartButton.dataset.id;
+        if (!productId) return;
 
-        const productId = target.dataset.id;
-
-        if (target.classList.contains("increment-quantity")) {
+        if (cartButton.classList.contains("increment-quantity")) {
             updateQuantity(productId, 1);
-        } else if (target.classList.contains("decrement-quantity")) {
+        } else if (cartButton.classList.contains("decrement-quantity")) {
             updateQuantity(productId, -1);
-        } else if (target.classList.contains("remove-from-cart")) {
+        } else if (cartButton.classList.contains("remove-from-cart")) {
             removeFromCart(productId);
         }
-    });
+        return; // Action handled
+    }
 
-if (resetButton) {
-    resetButton.addEventListener("click", () => {
+    // Case 2: The reset button
+    const resetButton = target.closest("#reset-cart-button");
+    if (resetButton) {
         resetCart();
-    });
-}
+        return; // Action handled
+    }
+});
 
-// Initial render
-renderCart();
-
+// Initializer is now just the reset function
+resetCart();
