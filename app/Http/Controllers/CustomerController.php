@@ -68,6 +68,7 @@ class CustomerController extends Controller
     public function destroy(Customer $customer)
     {
         // todo: add check for order history
+        if ($customer->orders()->count() > 0 || $customer->serviceHistories()->count() > 0) return redirect()->route('customers.index')->with('error', 'Customer cannot be deleted because it has associated orders.');
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully');
     }

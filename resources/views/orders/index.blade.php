@@ -85,7 +85,7 @@
                         </div>
                         <div class="text-xs font-semibold opacity-60">{{$order->customer->name}}</div>
                         <div class="text-xs text-green-500 font-semibold">Rp.
-                            {{$order->details->sum('immutable_price')}} <span
+                            {{number_format($order->details->sum('immutable_price'), 0, ',', '.')}} <span
                                 class="uppercase font-bold @if($order->status == 'paid') text-success @elseif($order->status == 'unpaid') text-error @else text-warning @endif">({{$order->status}})</span>
                         </div>
                         <div class="text-xs font-semibold opacity-60">Cashier {{$order->customer->user->name}}</div>

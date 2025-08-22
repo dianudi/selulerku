@@ -20,7 +20,8 @@
                     </div>
                 </div>
             </div>
-            @if (session()->has('success'))
+
+            {{-- @if (session()->has('success'))
             <div role="alert" class="alert alert-success max-w-sm ms-auto">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
                     viewBox="0 0 24 24">
@@ -30,15 +31,21 @@
                 <span class="dark:text-white">{{session('success')}}</span>
             </div>
 
-            @endif
+            @endif --}}
 
             {{-- list start --}}
             <ul class="list bg-base-100 rounded-box shadow-md lg:hidden">
                 @forelse ($productCategories as $category)
                 <li class="list-row">
                     <div class="flex items-center">
+                        @if ($category->icon)
                         <img class="size-10 rounded-box"
-                            src="{{ $category->icon ? asset('storage/'.$category->icon) : 'https://img.daisyui.com/images/profile/demo/1@94.webp'}}" />
+                            src="{{ asset('storage/'.$category->icon) }}" />
+                        @else
+                        <div class="size-10 rounded-box bg-gray-200 flex items-center justify-center">
+                            <i class="bi bi-image text-2xl text-gray-400"></i>
+                        </div>
+                        @endif
                     </div>
                     <div>
                         <div>{{$category->name}}</div>
@@ -84,8 +91,14 @@
                         @forelse ($productCategories as $category)
                         <tr>
                             <th>
+                                @if ($category->icon)
                                 <img class="size-10 rounded-box"
-                                    src="{{ $category->icon ? asset('storage/'.$category->icon) : 'https://img.daisyui.com/images/profile/demo/1@94.webp'}}" />
+                                    src="{{ asset('storage/'.$category->icon) }}" />
+                                @else
+                                <div class="size-10 rounded-box bg-gray-200 flex items-center justify-center">
+                                    <i class="bi bi-image text-2xl text-gray-400"></i>
+                                </div>
+                                @endif
                             </th>
                             <td>{{$category->name}}
 

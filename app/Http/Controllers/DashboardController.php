@@ -26,7 +26,7 @@ class DashboardController extends Controller
         });
 
         $totalServiceHistories = ServiceHistory::count();
-        $totalServiceIncome = ServiceHistory::with('details')->get()->sum(function ($serviceHistory) {
+        $totalServiceIncome = ServiceHistory::with('details')->where('status', 'done')->get()->sum(function ($serviceHistory) {
             return $serviceHistory->details->sum('price');
         });
 

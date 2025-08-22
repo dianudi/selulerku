@@ -38,7 +38,7 @@
                         <i class="bi bi-cash-coin text-3xl"></i>
                     </div>
                     <div class="stat-title">Total Order Income</div>
-                    <div class="stat-value">Rp. {{ number_format($totalIncome, 2, ',', '.') }}</div>
+                    <div class="stat-value">Rp. {{ number_format($totalIncome, 0, ',', '.') }}</div>
                 </div>
 
                 <div class="stat">
@@ -54,7 +54,7 @@
                         <i class="bi bi-wallet2 text-3xl"></i>
                     </div>
                     <div class="stat-title">Total Service Income</div>
-                    <div class="stat-value">Rp. {{ number_format($totalServiceIncome, 2, ',', '.') }}</div>
+                    <div class="stat-value">Rp. {{ number_format($totalServiceIncome, 0, ',', '.') }}</div>
                 </div>
             </div>
 

@@ -2,7 +2,7 @@ const updateCategoryClick = document.querySelectorAll(".updateCategoryClick");
 
 updateCategoryClick?.forEach((click) => {
     click.addEventListener("click", (e) => {
-        console.log(click.attributes["data-action"].value);
+        document.querySelector(".modal-box > h3").innerHTML = "Update Category";
         document
             .querySelector("#modalForm")
             .setAttribute("action", click.attributes["data-action"].value);
@@ -16,6 +16,7 @@ updateCategoryClick?.forEach((click) => {
 });
 
 document.querySelector("#addNewCategory")?.addEventListener("click", () => {
+    document.querySelector(".modal-box > h3").innerHTML = "Add New Category";
     document
         .querySelector("#modalForm")
         .setAttribute("action", "/productcategories");

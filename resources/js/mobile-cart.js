@@ -1,8 +1,7 @@
 const cartButton = document.getElementById("cart-button");
 const cartModal = document.getElementById("cart_modal");
-if (cartModal) {
-    const modalBox = cartModal.querySelector(".modal-box");
-}
+
+const modalBox = cartModal && cartModal.querySelector(".modal-box");
 const cartSidebarContainer = document.getElementById("cart-sidebar-container");
 
 const cartContent = document.getElementById("cart");
@@ -10,7 +9,7 @@ const cartContent = document.getElementById("cart");
 const handleMobileCart = () => {
     if (window.innerWidth < 1024) {
         // On mobile, move cart to modal
-        if (!modalBox.contains(cartContent)) {
+        if (modalBox && !modalBox.contains(cartContent)) {
             modalBox.appendChild(cartContent);
         }
     } else {
