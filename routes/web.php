@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountSettingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
@@ -28,6 +29,9 @@ Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
+    Route::get('/account', [AccountSettingController::class, 'index'])->name('account.index');
+    Route::patch('/account', [AccountSettingController::class, 'update'])->name('account.update');
+    Route::patch('/account/password', [AccountSettingController::class, 'updatePassword'])->name('account.password');
     Route::patch('/users/{user}/active', [UserController::class, 'activate'])->name('users.activate');
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
     Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
