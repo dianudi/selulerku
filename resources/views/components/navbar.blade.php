@@ -28,14 +28,13 @@
             </div>
         </div>
         <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-10 rounded-full">
-                    <img alt="Tailwind CSS Navbar component"
-                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
+            <div tabindex="0" role="button" class="flex items-center gap-2">
+                <i class="bi bi-person-circle text-2xl"></i>
+                <div>{{auth()->user()->name}}</div>
             </div>
+
             <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                <li><a>Settings</a></li>
+                <li><a href="{{route('account.index')}}">Settings</a></li>
                 <li>
                     <form class="w-full block" action="{{route('auth.logout')}}" method="post">
                         @csrf
