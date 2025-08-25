@@ -87,7 +87,7 @@ class UserManagementTest extends TestCase
 
     public function test_not_superadmin_cannot_access_user_management()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->cashier()->create();
         $this->actingAs($user);
         $res = $this->get(route('users.index'));
         $res->assertStatus(403);

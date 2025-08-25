@@ -13,8 +13,18 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $customers = $request->has('search') ? Customer::where('name', 'like', '%' . $request->search . '%')->paginate(15) : Customer::paginate(15);
-        if ($request->acceptsHtml()) return view('customers.index', compact('customers'));
+        $query = Customer::with(['orders', 'serviceHistories'])->latest();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $customers = $query->paginate(12);
+
+        if ($request->acceptsHtml()) {
+            return view('customers.index', compact('customers'));
+        }
+
         return response()->json($customers);
     }
 
@@ -37,7 +47,17 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        return view('customers.show', compact('customer'));
+        $customer->load(['orders.details', 'serviceHistories.details']);
+
+        $totalOrder = $customer->orders->reduce(function ($carry, $order) {
+            return $carry + $order->details->sum('immutable_price');
+        }, 0);
+
+        $totalService = $customer->serviceHistories->reduce(function ($carry, $service) {
+            return $carry + $service->details->sum('price');
+        }, 0);
+
+        return view('customers.show', compact('customer', 'totalOrder', 'totalService'));
     }
 
     /**

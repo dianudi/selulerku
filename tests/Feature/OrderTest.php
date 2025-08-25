@@ -110,7 +110,7 @@ class OrderTest extends TestCase
                 for ($i = 0; $i < 10; $i++) {
                     $detail->push([
                         'product_id' => Product::factory()->create()->id,
-                        'quantity' => random_int(1, 10),
+                        'quantity' => random_int(1, 5),
                     ]);
                 }
                 return $detail->toArray();
