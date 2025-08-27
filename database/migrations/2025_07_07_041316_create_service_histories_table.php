@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('service_histories', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(Customer::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('invoice_number')->unique();
             $table->dateTime('warranty_expired_at');

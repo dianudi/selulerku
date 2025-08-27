@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class ServiceHistoryFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::factory()->create()->id,
             'customer_id' => Customer::factory()->create()->id,
             'invoice_number' => $this->faker->unique()->ean13(),
             'warranty_expired_at' => $this->faker->dateTimeBetween('-1 year', '+1 year'),

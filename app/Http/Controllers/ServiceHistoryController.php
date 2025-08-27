@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateServiceHistoryRequest;
 use App\Models\ServiceDetail;
 use App\Models\ServiceHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceHistoryController extends Controller
 {
@@ -15,6 +16,7 @@ class ServiceHistoryController extends Controller
      */
     public function index(Request $request)
     {
+        // todo: admin can see all except for admin or cashier
         $serviceHistories = ServiceHistory::with('customer', 'details');
 
         if ($request->has('search')) {
@@ -47,6 +49,7 @@ class ServiceHistoryController extends Controller
     {
         $data = $request->validated();
         $serviceHistory = new ServiceHistory([
+            'user_id' => Auth::user()->id,
             'customer_id' => $data['customer_id'],
             'invoice_number' => 'INV-' . $data['customer_id'] . '-' . now()->format('Y/m/d') . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
             'warranty_expired_at' => $data['warranty_expired_at'],
@@ -71,6 +74,8 @@ class ServiceHistoryController extends Controller
      */
     public function show(ServiceHistory $serviceHistory)
     {
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+
         return view('serviceHistories.show', compact('serviceHistory'));
     }
 
@@ -79,6 +84,8 @@ class ServiceHistoryController extends Controller
      */
     public function edit(ServiceHistory $serviceHistory)
     {
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+
         return view('serviceHistories.edit', compact('serviceHistory'));
     }
 
@@ -87,6 +94,8 @@ class ServiceHistoryController extends Controller
      */
     public function update(UpdateServiceHistoryRequest $request, ServiceHistory $serviceHistory)
     {
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+
         $data = $request->validated();
         $serviceHistory->update([
             'total_revision' => $data['total_revision'],
@@ -108,6 +117,7 @@ class ServiceHistoryController extends Controller
      */
     public function destroy(ServiceHistory $serviceHistory)
     {
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
         $serviceHistory->details()->delete();
         $serviceHistory->delete();
         return redirect()->route('servicehistories.index')->with('success', 'Service History deleted successfully');
