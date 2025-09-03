@@ -18,10 +18,15 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        // todo : retrieve all if user is super admin
-        $orders = $request->has('search') ? Order::where('invoice_number', 'like', '%' . $request->search . '%')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(15) : Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(15);
+        $orders = $request->has('search') ? Order::where('invoice_number', 'like', '%' . $request->search . '%')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::id());
+        })->orderBy('created_at', 'desc')->paginate(15) : Order::when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::id());
+        })->orderBy('created_at', 'desc')->paginate(15);
 
-        $userOrders = Order::where('user_id', Auth::id());
+        $userOrders = Order::when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::id());
+        });
         $totalRevenue = OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_price');
         $totalOrders = $userOrders->clone()->count();
         $unpaidOrders = $userOrders->clone()->where('status', 'unpaid')->count();
@@ -85,6 +90,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        if ($order->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         return view('orders.show', compact('order'));
     }
 
@@ -93,6 +100,8 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
+        if ($order->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         $cartData = $order->details->map(function ($detail) {
             return [
                 'id' => $detail->product_id,
@@ -111,6 +120,8 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
+        if ($order->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         try {
             DB::transaction(function () use ($request, $order) {
                 foreach ($order->details as $oldDetail) {
@@ -158,6 +169,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        if ($order->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
         // Only allow deletion if the order was created today.
         if (!$order->created_at->isToday()) {
             return back()->with('error', 'Order can only be deleted on the same day it was created.');

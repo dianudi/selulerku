@@ -6,7 +6,7 @@ const cartSidebarContainer = document.getElementById("cart-sidebar-container");
 
 const cartContent = document.getElementById("cart");
 
-const handleMobileCart = () => {
+function handleMobileCart() {
     if (window.innerWidth < 1024) {
         // On mobile, move cart to modal
         if (modalBox && !modalBox.contains(cartContent)) {
@@ -21,7 +21,7 @@ const handleMobileCart = () => {
             cartSidebarContainer.appendChild(cartContent);
         }
     }
-};
+}
 
 if (cartButton)
     cartButton.addEventListener("click", () => {

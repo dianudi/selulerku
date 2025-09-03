@@ -6,12 +6,12 @@ const emptyCartMessage = document.getElementById("empty-cart-message");
 
 let currentCart = [];
 
-const saveCart = (cart) => {
+function saveCart(cart) {
     currentCart = cart;
     renderCart();
-};
+}
 
-const updateQuantity = (productId, change) => {
+function updateQuantity(productId, change) {
     let cart = [...currentCart];
     const product = cart.find((item) => item.id == productId);
     if (product) {
@@ -21,15 +21,15 @@ const updateQuantity = (productId, change) => {
         }
     }
     saveCart(cart);
-};
+}
 
-const removeFromCart = (productId) => {
+function removeFromCart(productId) {
     let cart = [...currentCart];
     cart = cart.filter((item) => item.id != productId);
     saveCart(cart);
-};
+}
 
-const resetCart = () => {
+function resetCart() {
     const editPageContainer = document.getElementById("order-edit-page");
     if (editPageContainer && editPageContainer.dataset.orderDetails) {
         const initialCartData = JSON.parse(
@@ -37,9 +37,9 @@ const resetCart = () => {
         );
         saveCart(initialCartData);
     }
-};
+}
 
-const renderCart = () => {
+function renderCart() {
     const cart = currentCart;
     if (!cartItemsContainer) return;
 
@@ -83,9 +83,9 @@ const renderCart = () => {
     });
 
     updateTotals(subtotal);
-};
+}
 
-const updateTotals = (subtotal) => {
+function updateTotals(subtotal) {
     const total = subtotal;
     if (cartSubtotalElement)
         cartSubtotalElement.textContent = `Rp. ${subtotal.toLocaleString(
@@ -93,14 +93,12 @@ const updateTotals = (subtotal) => {
         )}`;
     if (cartTotalElement)
         cartTotalElement.textContent = `Rp. ${total.toLocaleString("id-ID")}`;
-};
+}
 
 // --- MASTER EVENT LISTENER ATTACHED TO THE DOCUMENT ---
 document.addEventListener("click", (e) => {
-    const target = e.target;
-
     // Case 1: A button inside the cart items list
-    const cartButton = target.closest("#cart-items button");
+    const cartButton = e.target.closest("#cart-items button");
     if (cartButton) {
         const productId = cartButton.dataset.id;
         if (!productId) return;
@@ -116,7 +114,7 @@ document.addEventListener("click", (e) => {
     }
 
     // Case 2: The reset button
-    const resetButton = target.closest("#reset-cart-button");
+    const resetButton = e.target.closest("#reset-cart-button");
     if (resetButton) {
         resetCart();
         return; // Action handled

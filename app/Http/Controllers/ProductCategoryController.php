@@ -5,9 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Gate;
 
 class ProductCategoryController extends Controller
 {
+    public function __construct()
+    {
+        if (Gate::denies('superadmin') && Gate::denies('admin')) return abort(403);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,7 +15,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        if (Gate::denies('superadmin')) return abort(403);
+        if (Gate::denies('superadmin') && Gate::denies('admin')) return abort(403);
     }
 
     /**
@@ -47,6 +48,8 @@ class UserController extends Controller
 
     public function activate(User $user)
     {
+        if ($user->role == 'superadmin') return redirect()->route('users.index')->with('error', 'Superadmin cannot be deactivated.');
+        if ($user->id == Auth::user()->id) return redirect()->route('users.index')->with('error', 'You cannot deactivate your own account.');
         $user->active = !$user->active;
         $user->save();
         return redirect()->route('users.index')->with('success', 'User status changed successfully');

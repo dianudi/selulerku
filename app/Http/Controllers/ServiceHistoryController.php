@@ -17,7 +17,9 @@ class ServiceHistoryController extends Controller
     public function index(Request $request)
     {
         // todo: admin can see all except for admin or cashier
-        $serviceHistories = ServiceHistory::with('customer', 'details');
+        $serviceHistories = ServiceHistory::with('customer', 'details')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        });
 
         if ($request->has('search')) {
             $serviceHistories->whereHas('customer', function ($query) use ($request) {
@@ -27,9 +29,15 @@ class ServiceHistoryController extends Controller
 
         $serviceHistories = $serviceHistories->paginate(10);
 
-        $pendingCount = ServiceHistory::where('status', 'pending')->count();
-        $onProcessCount = ServiceHistory::where('status', 'on_process')->count();
-        $doneCount = ServiceHistory::where('status', 'done')->count();
+        $pendingCount = ServiceHistory::where('status', 'pending')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        })->count();
+        $onProcessCount = ServiceHistory::where('status', 'on_process')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        })->count();
+        $doneCount = ServiceHistory::where('status', 'done')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+            $query->where('user_id', Auth::user()->id);
+        })->count();
 
         return view('serviceHistories.index', compact('serviceHistories', 'pendingCount', 'onProcessCount', 'doneCount'));
     }
@@ -74,7 +82,7 @@ class ServiceHistoryController extends Controller
      */
     public function show(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
 
         return view('serviceHistories.show', compact('serviceHistory'));
     }
@@ -84,7 +92,7 @@ class ServiceHistoryController extends Controller
      */
     public function edit(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
 
         return view('serviceHistories.edit', compact('serviceHistory'));
     }
@@ -94,7 +102,7 @@ class ServiceHistoryController extends Controller
      */
     public function update(UpdateServiceHistoryRequest $request, ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
 
         $data = $request->validated();
         $serviceHistory->update([
@@ -117,7 +125,7 @@ class ServiceHistoryController extends Controller
      */
     public function destroy(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return redirect()->route('servicehistories.index')->with('error', 'Unauthorized');
+        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
         $serviceHistory->details()->delete();
         $serviceHistory->delete();
         return redirect()->route('servicehistories.index')->with('success', 'Service History deleted successfully');

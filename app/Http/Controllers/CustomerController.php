@@ -25,6 +25,7 @@ class CustomerController extends Controller
             return view('customers.index', compact('customers'));
         }
 
+        // note: for ajax request
         return response()->json($customers);
     }
 
@@ -87,8 +88,7 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        // todo: add check for order history
-        if ($customer->orders()->count() > 0 || $customer->serviceHistories()->count() > 0) return redirect()->route('customers.index')->with('error', 'Customer cannot be deleted because it has associated orders.');
+        if ($customer->orders()->exists() || $customer->serviceHistories()->count() > 0) return redirect()->route('customers.index')->with('error', 'Customer cannot be deleted because it has associated orders.');
         $customer->delete();
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully');
     }

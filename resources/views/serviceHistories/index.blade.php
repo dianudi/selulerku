@@ -119,8 +119,10 @@
                         <div class="card-actions justify-end">
                             <a href="{{ route('servicehistories.show', $serviceHistory) }}"
                                 class="btn btn-sm btn-info">View</a>
+                            {{-- @if($serviceHistory->user_id == auth()->user()->id) --}}
                             <a href="{{ route('servicehistories.edit', $serviceHistory) }}"
                                 class="btn btn-sm btn-warning">Edit</a>
+                            {{-- @endif --}}
                         </div>
                     </div>
                 </div>

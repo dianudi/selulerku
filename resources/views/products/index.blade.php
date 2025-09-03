@@ -65,9 +65,11 @@
                 <div class="flex flex-wrap-reverse md:flex-nowrap items-center gap-2">
                     <div class="flex w-full items-center justify-between">
                         {{-- <h1 class="text-xl md:text-2xl font-bold flex-auto">Products</h1> --}}
+                        @if(auth()->user()->role != 'cashier')
                         <a href="{{route('products.create')}}" class="btn btn-outline border-0"><i
                                 class="bi bi-plus text-2xl"></i></a>
-                        <button id="cart-button" type="button" class="btn btn-outline border-0 lg:hidden"><i
+                        @endif
+                        <button id="cart-button" type="button" class="btn btn-outline border-0 ms-auto lg:hidden"><i
                                 class="bi bi-cart text-2xl"></i></button>
                     </div>
                     <label class="input w-full lg:max-w-md">
@@ -88,7 +90,7 @@
             {{-- search product end --}}
 
             {{-- product list card start --}}
-            <div class="flex flex-wrap gap-1 mt-5">
+            <div class="flex gap-1 mt-5 ">
                 <div class="flex-auto">
                     <h2 class="text-lg font-bold">Product List</h2>
                     <div class="flex flex-wrap gap-1 justify-between lg:justify-start">
@@ -137,7 +139,7 @@
                 </div>
             </div>
             {{-- Cart start --}}
-            <div id="cart-sidebar-container" class="hidden lg:block min-w-[400px] px-2">
+            <div id="cart-sidebar-container" class="hidden lg:block min-w-[400px] px-2 border-l border-slate-700">
                 @if (session()->has('error'))
                 <div role="alert" class="alert alert-error">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
@@ -202,12 +204,12 @@
 <x-customer-selection-modal />
 
 <dialog id="cart_modal" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box">
-    <!-- Cart content will be moved here by JS on mobile -->
-  </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
+    <div class="modal-box">
+        <!-- Cart content will be moved here by JS on mobile -->
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
 </dialog>
 
 @endsection

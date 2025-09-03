@@ -5,17 +5,17 @@ const checkoutButton = document.getElementById("checkout");
 const emptyCartMessage = document.getElementById("empty-cart-message");
 const resetButton = document.getElementById("reset-cart-button");
 
-const getCart = () => {
+function getCart() {
     const cart = localStorage.getItem("shopping_cart");
     return cart ? JSON.parse(cart) : [];
-};
+}
 
-const saveCart = (cart) => {
+function saveCart(cart) {
     localStorage.setItem("shopping_cart", JSON.stringify(cart));
     renderCart();
-};
+}
 
-const addToCart = (product) => {
+function addToCart(product) {
     const cart = getCart();
     const existingProduct = cart.find((item) => item.id === product.id);
     if (existingProduct) {
@@ -24,9 +24,9 @@ const addToCart = (product) => {
         cart.push({ ...product, quantity: 1 });
     }
     saveCart(cart);
-};
+}
 
-const updateQuantity = (productId, change) => {
+function updateQuantity(productId, change) {
     let cart = getCart();
     const product = cart.find((item) => item.id === productId);
     if (product) {
@@ -36,20 +36,20 @@ const updateQuantity = (productId, change) => {
         }
     }
     saveCart(cart);
-};
+}
 
-const removeFromCart = (productId) => {
+function removeFromCart(productId) {
     let cart = getCart();
     cart = cart.filter((item) => item.id !== productId);
     saveCart(cart);
-};
+}
 
-const resetCart = () => {
+function resetCart() {
     localStorage.removeItem("shopping_cart");
     renderCart();
-};
+}
 
-const renderCart = () => {
+function renderCart() {
     const cart = getCart();
     if (cartItemsContainer) cartItemsContainer.innerHTML = "";
 
@@ -91,9 +91,9 @@ const renderCart = () => {
     });
 
     updateTotals(subtotal);
-};
+}
 
-const updateTotals = (subtotal) => {
+function updateTotals(subtotal) {
     const total = subtotal; // Add logic for tax or shipping if needed
     if (cartSubtotalElement)
         cartSubtotalElement.textContent = `Rp. ${subtotal.toLocaleString(
@@ -101,7 +101,7 @@ const updateTotals = (subtotal) => {
         )}`;
     if (cartTotalElement)
         cartTotalElement.textContent = `Rp. ${total.toLocaleString("id-ID")}`;
-};
+}
 
 // Event Listeners
 document.querySelectorAll(".add-to-cart").forEach((button) => {
@@ -140,4 +140,3 @@ if (resetButton) {
 
 // Initial render
 renderCart();
-

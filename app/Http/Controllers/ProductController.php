@@ -46,6 +46,8 @@ class ProductController extends Controller
      */
     public function create()
     {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         $categories = ProductCategory::all();
         return view('products.create', compact('categories'));
     }
@@ -55,6 +57,8 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         $product = new Product($request->validated());
         $product->user_id = Auth::id();
         $product->image = $request->has('image') ? $request->image->store('products', 'public') : null;
@@ -76,6 +80,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        // as show too
+        // if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         $categories = ProductCategory::all();
         return view('products.edit', compact('product', 'categories'));
     }
@@ -85,6 +92,8 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         $data = $request->validated();
         if ($request->has('image')) {
             $data['image'] = $request->image->store('products', 'public');
@@ -99,7 +108,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+
         // todo: add check for order history
+        if ($product->orderDetails()->exists()) return redirect()->route('products.index')->with('error', 'Product has order history. Cannot delete.');
         if ($product->image) Storage::disk('public')->delete($product->image);
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');

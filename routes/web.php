@@ -12,9 +12,7 @@ use App\Http\Controllers\ServiceHistoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', fn() => redirect()->route('dashboard.index'))->name('home');
 
 // Authentication
 Route::get('/login', [AuthController::class, 'login'])->middleware('guest')->name('auth.login');
@@ -27,6 +25,7 @@ Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetLinkE
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');
 
+// Main 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
     Route::get('/account', [AccountSettingController::class, 'index'])->name('account.index');

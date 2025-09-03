@@ -11,9 +11,11 @@
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('orders.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('orders.index')}}"><i class="bi bi-cart2"></i> Customer
                                 Orders</a></li>
+                @if(auth()->user()->role == 'admin' || auth()->user()->role == 'superadmin')
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('productcategories.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('productcategories.index')}}"><i class="bi bi-collection"></i> Product
                                 Category Management</a>
+                        @endif
                 </li>
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('servicehistories.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('servicehistories.index')}}"><i class="bi bi-card-checklist"></i> Service
@@ -21,8 +23,10 @@
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('customers.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('customers.index')}}"><i class="bi bi-people"></i> Customer
                                 Management</a></li>
+                @if(auth()->user()->role == 'admin' || auth()->user()->role == 'superadmin')
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('users.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('users.index')}}"><i class="bi bi-person-fill-gear"></i> User
                                 Management</a></li>
+                @endif
         </ul>
 </div>
