@@ -37,7 +37,7 @@ class ProductController extends Controller
             return $product->orderDetails->sum('immutable_price');
         });
         $lowStockCount = Product::where('quantity', '<', 5)->count();
-        $products = $request->has('search') ? Product::where('name', 'like', '%' . $request->search . '%')->paginate(15) : Product::paginate(15);
+        $products = $request->has('search') ? Product::where('name', 'like', '%' . $request->search . '%')->orderBy('name', 'asc')->paginate(15) : Product::orderBy('name', 'asc')->paginate(15);
         return view('products.index', compact('products', 'productCount', 'productSoldCountToday', 'productSoldCountYesterday', 'productProfitToday', 'productProfitYesterday', 'lowStockCount'));
     }
 

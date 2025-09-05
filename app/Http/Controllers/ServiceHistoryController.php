@@ -27,7 +27,7 @@ class ServiceHistoryController extends Controller
             })->orWhere('invoice_number', 'like', '%' . $request->search . '%');
         }
 
-        $serviceHistories = $serviceHistories->paginate(10);
+        $serviceHistories = $serviceHistories->orderBy('created_at', 'desc')->paginate(10);
 
         $pendingCount = ServiceHistory::where('status', 'pending')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
