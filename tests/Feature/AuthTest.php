@@ -16,6 +16,8 @@ class AuthTest extends TestCase
         $res = $this->get('/login');
         $res->assertStatus(200);
         $res->assertViewIs('auth.login');
+        $res->assertSee('Login');
+        $res->assertSee('Email');
     }
 
     public function test_user_can_login()

@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'name' => fake()->word(),
             'description' => fake()->sentence(),
             'sku' => fake()->unique()->ean13(),
-            'quantity' => fake()->numberBetween(1, 100),
+            'quantity' => 100,
             'price' => fake()->randomFloat(2, 1, 100),
             'image' => null,
         ];

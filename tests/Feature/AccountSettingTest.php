@@ -18,6 +18,7 @@ class AccountSettingTest extends TestCase
         $response = $this->get(route('account.index'));
         $response->assertStatus(200);
         $response->assertViewIs('account.index');
+        $response->assertSee('Account Setting');
     }
 
     public function test_user_can_update_account_setting(): void
