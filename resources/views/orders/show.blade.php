@@ -112,7 +112,7 @@
 
             {{-- Action Buttons --}}
             <div class="flex justify-end mt-4 gap-2">
-                <a href="#" class="btn btn-outline">
+                <a href="{{ route('orders.print', $order) }}" target="_blank" class="btn btn-outline">
                     <i class="bi bi-printer"></i>
                     Print Invoice
                 </a>

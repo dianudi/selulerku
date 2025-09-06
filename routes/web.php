@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ServiceHistoryController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,4 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class)->except(['create',]);
     Route::resource('servicehistories', ServiceHistoryController::class)->parameter('servicehistories', 'serviceHistory');
     Route::resource('orders', OrderController::class)->parameter('orders', 'order');
+    Route::get('/orders/{order}/print', [OrderController::class, 'print'])->name('orders.print');
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 });

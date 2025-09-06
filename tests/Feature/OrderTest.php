@@ -164,4 +164,19 @@ class OrderTest extends TestCase
         $res->assertSessionHas('error');
         $this->assertDatabaseCount('orders', 1);
     }
+
+    public function test_admin_can_print_invoice()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $order = Order::factory()->forUser($user)->create();
+        $order->details()->create([
+            'product_id' => Product::factory()->create()->id,
+            'quantity' => random_int(1, 10),
+            'immutable_price' => Product::select('price')->where('id', Product::factory()->create()->id)->first()->price
+        ]);
+        $res = $this->get(route('orders.print', $order));
+        $res->assertStatus(200);
+        $res->assertHeader('Content-Type', 'application/pdf');
+    }
 }

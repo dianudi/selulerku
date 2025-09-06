@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         User::factory()->superadmin()->create();
         Product::factory(10)->create();
         Customer::factory(10)->create();
+        $this->call(SettingSeeder::class);
     }
 }

@@ -10,6 +10,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class OrderController extends Controller
 {
@@ -183,5 +185,14 @@ class OrderController extends Controller
         $order->delete();
 
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully');
+    }
+
+    public function print(Order $order)
+    {
+        if ($order->user_id !== Auth::user()->id) return abort(403);
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('orders.receipt', compact('order'));
+        return $pdf->stream('receipt-' . str_replace('/', '-', $order->invoice_number) . '.pdf');
     }
 }
