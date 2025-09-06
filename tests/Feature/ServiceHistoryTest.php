@@ -155,4 +155,14 @@ class ServiceHistoryTest extends TestCase
             'service_history_id' => $serviceHistory->id
         ]);
     }
+
+    public function test_user_can_print_receipt()
+    {
+        $this->actingAs(User::factory()->create());
+        $serviceHistory = ServiceHistory::factory()->create();
+        ServiceDetail::factory(5)->forServiceHistory($serviceHistory)->create();
+        $response = $this->get(route('servicehistories.print', $serviceHistory));
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+    }
 }

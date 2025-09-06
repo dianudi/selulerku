@@ -8,6 +8,7 @@ use App\Models\ServiceDetail;
 use App\Models\ServiceHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ServiceHistoryController extends Controller
 {
@@ -129,5 +130,13 @@ class ServiceHistoryController extends Controller
         $serviceHistory->details()->delete();
         $serviceHistory->delete();
         return redirect()->route('servicehistories.index')->with('success', 'Service History deleted successfully');
+    }
+
+    public function print(ServiceHistory $serviceHistory)
+    {
+        // if ($serviceHistory->user_id !== Auth::user()->id) return abort(403);
+
+        $pdf = Pdf::loadView('serviceHistories.receipt', compact('serviceHistory'));
+        return $pdf->stream('receipt-' . str_replace('/', '-', $serviceHistory->invoice_number) . '.pdf');
     }
 }

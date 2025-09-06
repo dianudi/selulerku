@@ -12,7 +12,7 @@
                         <div class="flex justify-between items-center">
                             <h2 class="card-title">Service History Details</h2>
                             <div class="hidden md:flex justify-end gap-2">
-                                <button class="btn btn-primary"><i class="bi bi-printer"></i></button>
+                                <a href="{{ route('servicehistories.print', $serviceHistory) }}" target="_blank" class="btn btn-primary"><i class="bi bi-printer"></i></a>
                                 <a href="{{ route('servicehistories.edit', $serviceHistory) }}"
                                     class="btn btn-secondary"><i class="bi bi-pencil"></i></a>
                                 <form action="{{ route('servicehistories.destroy', $serviceHistory) }}" method="post">
@@ -93,7 +93,7 @@
                     </div>
                 </div>
                 <div class="md:hidden flex justify-around gap-2 my-4">
-                    <button class="btn btn-primary flex-1"><i class="bi bi-printer"></i> Print</button>
+                    <a href="{{ route('servicehistories.print', $serviceHistory) }}" target="_blank" class="btn btn-primary flex-1"><i class="bi bi-printer"></i> Print</a>
                     <a href="{{ route('servicehistories.edit', $serviceHistory) }}" class="btn btn-secondary flex-1"><i
                             class="bi bi-pencil"></i> Edit</a>
                     <form action="{{ route('servicehistories.destroy', $serviceHistory) }}" method="post"

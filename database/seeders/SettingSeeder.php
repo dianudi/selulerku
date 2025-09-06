@@ -12,15 +12,17 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Setting::insert([
-            [
-                'key' => 'receipt_address',
-                'value' => 'Jl. Merdeka No. 123, Kota Bandung'
-            ],
-            [
-                'key' => 'receipt_footer',
-                'value' => 'Thank you for your purchase!'
-            ]
-        ]);
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'receipt_address'],
+            ['value' => 'Jl. Merdeka No. 123, Kota Bandung']
+        );
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'receipt_footer'],
+            ['value' => 'Thank you for your purchase!']
+        );
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'contact_phone'],
+            ['value' => '0812-3456-7890']
+        );
     }
 }

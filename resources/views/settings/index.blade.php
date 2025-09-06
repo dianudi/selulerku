@@ -31,6 +31,10 @@
                                 <legend class="fieldset-legend">Receipt Footer</legend>
                                 <input type="text" name="receipt_footer" class="input input-bordered w-full" value="{{ $settings['receipt_footer'] ?? '' }}">
                             </fieldset>
+                            <fieldset class="fieldset mb-4">
+                                <legend class="fieldset-legend">Contact Phone</legend>
+                                <input type="text" name="contact_phone" class="input input-bordered w-full" value="{{ $settings['contact_phone'] ?? '' }}">
+                            </fieldset>
                             <div class="flex justify-end">
                                 <button type="submit" class="btn btn-primary">Save Settings</button>
                             </div>
