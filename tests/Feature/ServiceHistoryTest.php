@@ -45,6 +45,7 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000)
                 ]
             ]
         ], ['accept' => 'application/json']);
@@ -68,6 +69,7 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000)
                 ]
             ]
         ], ['referer' => route('servicehistories.create')]);
@@ -111,6 +113,7 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000)
                 ]
             ]
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
@@ -133,6 +136,7 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000)
                 ]
             ]
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);

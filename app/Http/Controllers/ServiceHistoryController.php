@@ -70,7 +70,8 @@ class ServiceHistoryController extends Controller
             return [
                 'kind' => $detail['kind'],
                 'description' => $detail['description'],
-                'price' => $detail['price']
+                'price' => $detail['price'],
+                'cost_price' => $detail['cost_price'],
             ];
         })->toArray());
 
@@ -115,7 +116,8 @@ class ServiceHistoryController extends Controller
             return [
                 'kind' => $detail['kind'],
                 'description' => $detail['description'],
-                'price' => $detail['price']
+                'price' => $detail['price'],
+                'cost_price' => $detail['cost_price'],
             ];
         })->toArray());
         return response()->json(['message' => 'Service History updated successfully.']);

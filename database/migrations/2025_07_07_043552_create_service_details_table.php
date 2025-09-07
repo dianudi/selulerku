@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(ServiceHistory::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('kind');
             $table->text('description');
+            $table->integer('cost_price')->default(0);
             $table->integer('price');
             $table->timestamps();
         });

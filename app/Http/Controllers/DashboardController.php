@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\ServiceHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +15,6 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $totalCustomers = Customer::count();
-        $totalProducts = Product::count();
         $totalOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
         })->count();
@@ -34,9 +30,19 @@ class DashboardController extends Controller
             return $query->where('user_id', Auth::user()->id);
         })->count();
 
-        $totalServiceIncome = ServiceHistory::with('details')->where('status', 'done')->get()->sum(function ($serviceHistory) {
+        $totalServiceGrossIncome = ServiceHistory::with('details')->where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+            return $query->where('user_id', Auth::user()->id);
+        })->get()->sum(function ($serviceHistory) {
             return $serviceHistory->details->sum('price');
         });
+
+        $totalServiceCost = ServiceHistory::with('details')->where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+            return $query->where('user_id', Auth::user()->id);
+        })->get()->sum(function ($serviceHistory) {
+            return $serviceHistory->details->sum('cost_price');
+        });
+
+        $totalServiceNetIncome = $totalServiceGrossIncome - $totalServiceCost;
 
         $recentOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
@@ -61,7 +67,7 @@ class DashboardController extends Controller
             ->pluck('total', 'month');
 
         $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", service_histories.created_at)' : 'MONTH(service_histories.created_at)';
-        $monthlyServiceIncome = ServiceHistory::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
+        $monthlyServiceIncome = ServiceHistory::where('status', 'done')->when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
             return $query->where('service_histories.user_id', Auth::user()->id);
         })->select(
             DB::raw('sum(service_details.price) as total'),
@@ -110,12 +116,11 @@ class DashboardController extends Controller
         }
 
         return view('dashboard.index', compact(
-            'totalCustomers',
-            'totalProducts',
             'totalOrders',
             'totalIncome',
             'totalServiceHistories',
-            'totalServiceIncome',
+            'totalServiceGrossIncome',
+            'totalServiceNetIncome',
             'recentOrders',
             'recentServiceHistories',
             'monthlyIncomeData',

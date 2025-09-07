@@ -52,6 +52,7 @@
                                         <th>Kind</th>
                                         <th>Description</th>
                                         <th>Price</th>
+                                    <th>Cost Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -61,14 +62,29 @@
                                         <td>{{ $detail->kind }}</td>
                                         <td>{{ $detail->description }}</td>
                                         <td>Rp. {{ number_format($detail->price, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($detail->cost_price, 0, ',', '.') }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="3" class="text-right">Total:</th>
+                                        <th colspan="3" class="text-right">Total Gross:</th>
                                         <th>Rp.
                                             {{ number_format($serviceHistory->details->sum('price'), 0, ',', '.') }}
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="text-right">Total Cost:</th>
+                                        <th></th>
+                                        <th>Rp.
+                                            {{ number_format($serviceHistory->details->sum('cost_price'), 0, ',', '.') }}
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="text-right">Net Income:</th>
+                                        <th colspan="2">Rp.
+                                            {{ number_format($serviceHistory->details->sum('price') - $serviceHistory->details->sum('cost_price'), 0, ',', '.') }}
                                         </th>
                                     </tr>
                                 </tfoot>
@@ -84,11 +100,17 @@
                                     <p>{{ $detail->description }}</p>
                                     <p class="text-right font-bold">Rp.
                                         {{ number_format($detail->price, 0, ',', '.') }}</p>
+                                    <p class="text-right text-sm">Modal: Rp.
+                                        {{ number_format($detail->cost_price, 0, ',', '.') }}</p>
                                 </div>
                             </div>
                             @endforeach
-                            <div class="text-right font-bold text-lg">Total: Rp.
+                            <div class="text-right font-bold text-lg">Total Gross: Rp.
                                 {{ number_format($serviceHistory->details->sum('price'), 0, ',', '.') }}</div>
+                            <div class="text-right font-bold text-lg">Total Cost: Rp.
+                                {{ number_format($serviceHistory->details->sum('cost_price'), 0, ',', '.') }}</div>
+                            <div class="text-right font-bold text-lg">Net Income: Rp.
+                                {{ number_format($serviceHistory->details->sum('price') - $serviceHistory->details->sum('cost_price'), 0, ',', '.') }}</div>
                         </div>
                     </div>
                 </div>

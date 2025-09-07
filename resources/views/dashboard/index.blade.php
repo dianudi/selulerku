@@ -9,21 +9,6 @@
 
             {{-- Stats --}}
             <div class="stats shadow w-full my-4">
-                <div class="stat">
-                    <div class="stat-figure text-secondary">
-                        <i class="bi bi-people text-3xl"></i>
-                    </div>
-                    <div class="stat-title">Total Customers</div>
-                    <div class="stat-value">{{ $totalCustomers }}</div>
-                </div>
-
-                <div class="stat">
-                    <div class="stat-figure text-secondary">
-                        <i class="bi bi-box-seam text-3xl"></i>
-                    </div>
-                    <div class="stat-title">Total Products</div>
-                    <div class="stat-value">{{ $totalProducts }}</div>
-                </div>
 
                 <div class="stat">
                     <div class="stat-figure text-secondary">
@@ -41,6 +26,7 @@
                     <div class="stat-value">Rp. {{ number_format($totalIncome, 0, ',', '.') }}</div>
                 </div>
 
+
                 <div class="stat">
                     <div class="stat-figure text-secondary">
                         <i class="bi bi-tools text-3xl"></i>
@@ -53,8 +39,18 @@
                     <div class="stat-figure text-secondary">
                         <i class="bi bi-wallet2 text-3xl"></i>
                     </div>
-                    <div class="stat-title">Total Service Income</div>
-                    <div class="stat-value">Rp. {{ number_format($totalServiceIncome, 0, ',', '.') }}</div>
+                    <div class="stat-title">Total Service Gross Income</div>
+                    <div class="stat-value">Rp. {{ number_format($totalServiceGrossIncome, 0, ',', '.') }}</div>
+                </div>
+
+
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="bi bi-currency-dollar text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Total Service Net Income</div>
+                    <div class="stat-value">Rp. {{ number_format($totalServiceNetIncome, 0, ',', '.') }}</div>
                 </div>
             </div>
 

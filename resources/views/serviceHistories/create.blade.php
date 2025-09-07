@@ -81,6 +81,13 @@
                                 placeholder="Type here" />
                             <div id="details-0-price" class="text-red-500 text-xs mt-1"></div>
                         </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Cost Price</legend>
+                            <input name="details[0][cost_price]" type="number"
+                                class="input w-full"
+                                placeholder="Type here" />
+                            <div id="details-0-cost_price" class="text-red-500 text-xs mt-1"></div>
+                        </fieldset>
                     </div>
                 </template>
             </div>

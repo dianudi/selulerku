@@ -38,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class)->except(['create',]);
     Route::resource('servicehistories', ServiceHistoryController::class)->parameter('servicehistories', 'serviceHistory');
-    Route::get('servicehistories/{serviceHistory}/print', [\App\Http\Controllers\ServiceHistoryController::class, 'print'])->name('servicehistories.print');
+    Route::get('servicehistories/{serviceHistory}/print', [ServiceHistoryController::class, 'print'])->name('servicehistories.print');
     Route::resource('orders', OrderController::class)->parameter('orders', 'order');
     Route::get('/orders/{order}/print', [OrderController::class, 'print'])->name('orders.print');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

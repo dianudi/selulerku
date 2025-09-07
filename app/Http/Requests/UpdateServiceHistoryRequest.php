@@ -28,6 +28,7 @@ class UpdateServiceHistoryRequest extends FormRequest
             'details.*.kind' => 'required|string',
             'details.*.description' => 'required|string',
             'details.*.price' => 'required|integer',
+            'details.*.cost_price' => 'required|integer|min:0',
         ];
     }
 }
