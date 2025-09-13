@@ -21,7 +21,8 @@ return new class extends Migration
             $table->text('description');
             $table->string('sku')->unique();
             $table->integer('quantity');
-            $table->float('price');
+            $table->float('buy_price');
+            $table->float('sell_price');
             $table->string('image')->nullable();
             $table->timestamps();
         });

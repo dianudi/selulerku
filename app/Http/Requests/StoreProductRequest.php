@@ -26,7 +26,8 @@ class StoreProductRequest extends FormRequest
             'description' => 'required|string',
             'sku' => 'required|string|unique:products,sku',
             'quantity' => 'required|integer',
-            'price' => 'required|numeric',
+            'buy_price' => 'required|numeric',
+            'sell_price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'product_category_id' => 'required|exists:product_categories,id',
         ];

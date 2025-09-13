@@ -56,6 +56,10 @@ Ikuti langkah-langkah berikut untuk menginstal dan menjalankan proyek ini di lin
         ```bash
         php artisan migrate
         ```
+        Jalankan seed untuk akun superadmin
+        ```bash
+        php artisan db:seed AdminSeeder
+        ```
     -   (Opsional) Jalankan seeder untuk data dummy:
         ```bash
         php artisan db:seed

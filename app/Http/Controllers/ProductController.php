@@ -110,7 +110,6 @@ class ProductController extends Controller
     {
         if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
 
-        // todo: add check for order history
         if ($product->orderDetails()->exists()) return redirect()->route('products.index')->with('error', 'Product has order history. Cannot delete.');
         if ($product->image) Storage::disk('public')->delete($product->image);
         $product->delete();

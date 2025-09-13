@@ -74,7 +74,7 @@ class OrderController extends Controller
                     $details[] = [
                         'product_id' => $detail['product_id'],
                         'quantity' => $detail['quantity'],
-                        'immutable_price' => $product->price * $detail['quantity']
+                        'immutable_price' => $product->sell_price * $detail['quantity']
                     ];
                 }
 
@@ -108,7 +108,7 @@ class OrderController extends Controller
             return [
                 'id' => $detail->product_id,
                 'name' => $detail->product->name,
-                'price' => $detail->product->price,
+                'price' => $detail->product->sell_price,
                 'quantity' => $detail->quantity,
                 'image' => $detail->product->image ? asset('storage/' . $detail->product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png',
             ];
@@ -150,7 +150,7 @@ class OrderController extends Controller
                         $newDetailsData[] = [
                             'product_id' => $detail['product_id'],
                             'quantity' => $detail['quantity'],
-                            'immutable_price' => $product->price * $detail['quantity'],
+                            'immutable_price' => $product->sell_price * $detail['quantity'],
                         ];
                     }
                 }

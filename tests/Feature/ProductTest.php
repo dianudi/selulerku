@@ -39,7 +39,7 @@ class ProductTest extends TestCase
         $response->assertViewIs('products.create');
     }
 
-    public function test_user_can_store_product()
+    public function test_superadmin_or_admin_can_store_product()
     {
         $this->actingAs(User::factory()->create());
         $response = $this->post(route('products.store'), [
@@ -47,7 +47,8 @@ class ProductTest extends TestCase
             'description' => 'test',
             'sku' => fake()->unique()->ean13(),
             'quantity' => 10,
-            'price' => 100,
+            'buy_price' => 100,
+            'sell_price' => 200,
             'image' => File::fake()->image('test.jpg'),
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'text/html']);
@@ -61,7 +62,8 @@ class ProductTest extends TestCase
             'description' => 'test',
             'sku' => fake()->unique()->ean13(),
             'quantity' => 10,
-            'price' => 100,
+            'buy_price' => 100,
+            'sell_price' => 200,
             'image' => File::fake()->image('test.jpg'),
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'application/json']);
@@ -70,7 +72,7 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products', ['name' => 'testajax']);
     }
 
-    public function test_user_cannot_store_product_with_invalid_data()
+    public function test_superadmin_or_admin_cannot_store_product_with_invalid_data()
     {
         $this->actingAs(User::factory()->create());
         $response = $this->post(route('products.store'), ['name' => ''], ['referer' => route('products.index')]);
@@ -97,7 +99,7 @@ class ProductTest extends TestCase
         $response->assertViewIs('products.edit');
     }
 
-    public function test_user_can_update_product()
+    public function test_superadmin_or_admin_can_update_product()
     {
         $product = Product::factory()->create();
         $this->actingAs(User::factory()->create());
@@ -106,7 +108,8 @@ class ProductTest extends TestCase
             'description' => 'updated',
             'sku' => fake()->unique()->ean13(),
             'quantity' => 10,
-            'price' => 100,
+            'buy_price' => 100,
+            'sell_price' => 200,
             'image' => File::fake()->image('test.jpg'),
             'product_category_id' => ProductCategory::factory()->create()->id,
         ]);
@@ -120,7 +123,8 @@ class ProductTest extends TestCase
             'description' => 'updated',
             'sku' => fake()->unique()->ean13(),
             'quantity' => 10,
-            'price' => 100,
+            'buy_price' => 100,
+            'sell_price' => 200,
             'image' => File::fake()->image('test.jpg'),
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'application/json']);
@@ -129,7 +133,7 @@ class ProductTest extends TestCase
         $this->assertDatabaseHas('products', ['name' => 'updatedajax']);
     }
 
-    public function test_user_cannot_update_product_with_invalid_data()
+    public function test_superadmin_or_admin_cannot_update_product_with_invalid_data()
     {
         $product = Product::factory()->create();
         $this->actingAs(User::factory()->create());
@@ -139,7 +143,7 @@ class ProductTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-    public function test_user_can_delete_product()
+    public function test_superadmin_or_admin_can_delete_product()
     {
         $product = Product::factory()->create();
         $this->actingAs(User::factory()->create());

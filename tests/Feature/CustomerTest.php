@@ -44,7 +44,7 @@ class CustomerTest extends TestCase
         ]);
     }
 
-    public function test_user_can_visit_customer_page()
+    public function test_user_can_visit_customer_detail_page()
     {
         $customer = Customer::factory()->create();
         $this->actingAs(User::factory()->create());

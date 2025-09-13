@@ -99,7 +99,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 100),
-            'immutable_price' => Product::select('price')->where('id', Product::factory()->create()->id)->first()->price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->put(route('orders.update', $order), [
@@ -142,7 +142,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('price')->where('id', Product::factory()->create()->id)->first()->price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->delete(route('orders.destroy', $order), [], ['referer' => route('orders.index')]);
@@ -156,7 +156,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('price')->where('id', Product::factory()->create()->id)->first()->price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->delete(route('orders.destroy', $order), [], ['referer' => route('orders.index')]);
@@ -173,7 +173,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('price')->where('id', Product::factory()->create()->id)->first()->price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
         ]);
         $res = $this->get(route('orders.print', $order));
         $res->assertStatus(200);

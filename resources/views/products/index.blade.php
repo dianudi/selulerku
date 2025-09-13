@@ -114,7 +114,8 @@
                                     <a class="hover:underline"
                                         href="{{route('products.edit', $product->id)}}">{{$product->name}}</a>
                                 </h2>
-                                <p class="text-lg font-bold mt-1">Rp. {{ number_format($product->price, 0, ',', '.') }}
+                                <p class="text-lg font-bold mt-1">Rp. {{ number_format($product->sell_price, 0, ',',
+                                    '.') }}
                                 </p>
                             </div>
                             <div class="flex justify-between items-center mt-2">
@@ -125,7 +126,7 @@
                                     <span>Sold: {{$product->orderDetails()->sum('quantity')}}</span>
                                 </div>
                                 <button type="button" data-id="{{$product->id}}" data-product-name="{{$product->name}}"
-                                    data-product-price="{{$product->price}}"
+                                    data-product-price="{{$product->sell_price}}"
                                     data-product-image="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
                                     class="add-to-cart btn btn-sm btn-primary active:scale-90 transition-all">
                                     <i class="bi bi-cart-plus text-lg"></i>

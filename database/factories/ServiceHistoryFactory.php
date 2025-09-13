@@ -27,4 +27,13 @@ class ServiceHistoryFactory extends Factory
             'status' => $this->faker->randomElement(['pending', 'on_process', 'done']),
         ];
     }
+
+    public function forUser(User $user)
+    {
+        return $this->state(function (array $attributes) use ($user) {
+            return [
+                'user_id' => $user->id,
+            ];
+        });
+    }
 }

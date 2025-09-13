@@ -101,8 +101,9 @@ class ServiceHistoryTest extends TestCase
 
     public function test_user_can_update_service_history()
     {
-        $this->actingAs(User::factory()->create());
-        $serviceHistory = ServiceHistory::factory()->create();
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
         ServiceDetail::factory(5)->forServiceHistory($serviceHistory)->create();
         $totalRevision = $this->faker->randomNumber();
         $response = $this->put(route('servicehistories.update', $serviceHistory), [
@@ -126,8 +127,32 @@ class ServiceHistoryTest extends TestCase
 
     public function test_user_cannot_update_service_history_with_invalid_data()
     {
-        $this->actingAs(User::factory()->create());
-        $serviceHistory = ServiceHistory::factory()->create();
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
+        $response = $this->put(route('servicehistories.update', $serviceHistory), [
+            'total_revision' => $this->faker->randomNumber(),
+            'status' => $this->faker->randomElement(['pending', 'done']),
+            'details' => [
+                [
+                    'kind' => $this->faker->randomElement(['maintenance', 'repair']),
+                    'description' => $this->faker->sentence(),
+                    'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000)
+                ]
+            ]
+        ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('service_histories', [
+            'total_revision' => $this->faker->randomNumber(),
+        ]);
+    }
+
+    public function test_user_cannot_update_service_history_if_user_id_does_not_match()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
         $response = $this->put(route('servicehistories.update', $serviceHistory), [
             'total_revision' => $this->faker->randomNumber(),
             'status' => $this->faker->randomElement(['pending', 'done']),
@@ -148,8 +173,9 @@ class ServiceHistoryTest extends TestCase
 
     public function test_user_can_delete_service_history()
     {
-        $this->actingAs(User::factory()->create());
-        $serviceHistory = ServiceHistory::factory()->create();
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
         $response = $this->delete(route('servicehistories.destroy', $serviceHistory));
         $response->assertRedirect(route('servicehistories.index'));
         $this->assertDatabaseMissing('service_histories', [

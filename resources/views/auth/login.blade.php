@@ -37,6 +37,12 @@
                 <div class="text-red-500">{{$message}}</div>
                 @enderror
             </fieldset>
+            <fieldset class="fieldset">
+                <label class="label">
+                    <input type="checkbox" name="remember" class="checkbox" />
+                    Remember me
+                </label>
+            </fieldset>
             <button class="btn btn-primary w-full my-3">Login</button>
         </form>
     </div>

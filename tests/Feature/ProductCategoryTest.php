@@ -14,7 +14,7 @@ class ProductCategoryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_superadmin_can_visit_product_category_page()
+    public function test_superadmin_or_admin_can_visit_product_category_page()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $response = $this->get(route('productcategories.index'));
@@ -22,7 +22,7 @@ class ProductCategoryTest extends TestCase
         $response->assertViewIs('productCategories.index');
     }
 
-    public function test_superadmin_can_store_product_category()
+    public function test_superadmin_or_admin_can_store_product_category()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $response = $this->post(route('productcategories.store'), ['name' => 'test', 'icon' => File::fake()->image('test.jpg')], ['accept' => 'text/html']);
@@ -37,7 +37,7 @@ class ProductCategoryTest extends TestCase
         $this->assertDatabaseHas('product_categories', ['name' => 'test2']);
     }
 
-    public function test_superadmin_cannot_store_product_category_with_invalid_data()
+    public function test_superadmin_or_admin_cannot_store_product_category_with_invalid_data()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $response = $this->post(route('productcategories.store'), ['name' => ''], ['referer' => route('productcategories.index')]);
@@ -46,7 +46,7 @@ class ProductCategoryTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-    public function test_superadmin_can_update_product_category()
+    public function test_superadmin_or_admin_can_update_product_category()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $productCategory = ProductCategory::factory()->create();
@@ -62,7 +62,7 @@ class ProductCategoryTest extends TestCase
         $this->assertDatabaseHas('product_categories', ['name' => 'updated2']);
     }
 
-    public function test_superadmin_cannot_update_product_category_with_invalid_data()
+    public function test_superadmin_or_admin_cannot_update_product_category_with_invalid_data()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $productCategory = ProductCategory::factory()->create();
@@ -72,7 +72,7 @@ class ProductCategoryTest extends TestCase
         $response->assertSessionHasErrors(['name']);
     }
 
-    public function test_superadmin_can_delete_product_category()
+    public function test_superadmin_or_admin_can_delete_product_category()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $productCategory = ProductCategory::factory()->create();
@@ -83,7 +83,7 @@ class ProductCategoryTest extends TestCase
         $this->assertDatabaseMissing('product_categories', ['id' => $productCategory->id]);
     }
 
-    public function test_superadmin_cannot_delete_product_category_with_products()
+    public function test_superadmin_or_admin_cannot_delete_product_category_with_products()
     {
         $this->actingAs(User::factory()->superadmin()->create());
         $productCategory = ProductCategory::factory()->hasProducts(1)->create();

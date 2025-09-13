@@ -22,7 +22,7 @@ class DashboardController extends Controller
             return $query->where('user_id', Auth::user()->id);
         })->get()->sum(function ($order) {
             return $order->details->sum(function ($detail) {
-                return $detail->quantity * $detail->product->price;
+                return $detail->immutable_price;
             });
         });
 
@@ -57,7 +57,7 @@ class DashboardController extends Controller
         $monthlyIncome = Order::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
             return $query->where('orders.user_id', Auth::user()->id);
         })->select(
-            DB::raw('sum(order_details.quantity * products.price) as total'),
+            DB::raw('sum(order_details.quantity * products.sell_price) as total'),
             DB::raw("$monthExpression as month")
         )
             ->join('order_details', 'orders.id', '=', 'order_details.order_id')
