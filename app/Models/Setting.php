@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Setting extends Model
 {
     public $timestamps = false;
+
     protected $primaryKey = 'key';
+
     public $incrementing = false;
+
     protected $fillable = ['key', 'value'];
 }

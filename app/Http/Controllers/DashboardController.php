@@ -51,7 +51,7 @@ class DashboardController extends Controller
             return $query->where('user_id', Auth::user()->id);
         })->with('customer')->latest()->take(5)->get();
 
-        $dbDriver = config('database.connections.' . config('database.default') . '.driver');
+        $dbDriver = config('database.connections.'.config('database.default').'.driver');
 
         $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", orders.created_at)' : 'MONTH(orders.created_at)';
         $monthlyIncome = Order::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {

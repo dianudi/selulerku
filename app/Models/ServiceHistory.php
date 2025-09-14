@@ -13,6 +13,7 @@ class ServiceHistory extends Model
     use HasFactory;
 
     protected $guarded = ['id', 'created_at', 'updated_at'];
+
     protected $with = ['details'];
 
     public function details(): HasMany
@@ -29,6 +30,7 @@ class ServiceHistory extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     protected function casts(): array
     {
         return [

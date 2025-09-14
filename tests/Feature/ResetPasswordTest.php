@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
-use Mockery\Matcher\Not;
 use Tests\TestCase;
 
 class ResetPasswordTest extends TestCase
@@ -47,11 +45,12 @@ class ResetPasswordTest extends TestCase
     {
         Notification::fake();
         $user = User::factory()->create();
-        $this->post(route('password.email'), ['email' => $user->email,]);
-        Notification::assertSentTo($user, ResetPassword::class, function ($notification, $channels) use ($user) {
+        $this->post(route('password.email'), ['email' => $user->email]);
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification, $channels) {
             $res = $this->get(route('password.reset', ['token' => $notification->token]));
             $res->assertStatus(200);
             $res->assertViewIs('auth.reset-password');
+
             return true;
         });
     }
@@ -60,7 +59,7 @@ class ResetPasswordTest extends TestCase
     {
         Notification::fake();
         $user = User::factory()->create();
-        $this->post(route('password.email'), ['email' => $user->email,]);
+        $this->post(route('password.email'), ['email' => $user->email]);
         Notification::assertSentTo($user, ResetPassword::class, function ($notification, $channels) use ($user) {
             $res = $this->get(route('password.reset', ['token' => $notification->token]));
             $res->assertStatus(200);
@@ -73,6 +72,7 @@ class ResetPasswordTest extends TestCase
             $response->assertStatus(302);
             $response->assertRedirect(route('auth.login'));
             $response->assertSessionHas('status');
+
             return true;
         });
         $this->assertTrue(Hash::check('updatedPassword', $user->refresh()->password));

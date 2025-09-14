@@ -13,7 +13,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => redirect()->route('dashboard.index'))->name('home');
+Route::get('/', fn () => redirect()->route('dashboard.index'))->name('home');
 
 // Authentication
 Route::get('/login', [AuthController::class, 'login'])->middleware('guest')->name('auth.login');
@@ -26,7 +26,7 @@ Route::post('/forgot-password', [ResetPasswordController::class, 'sendResetLinkE
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'resetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [ResetPasswordController::class, 'updatePassword'])->middleware('guest')->name('password.update');
 
-// Main 
+// Main
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard.index');
     Route::get('/account', [AccountSettingController::class, 'index'])->name('account.index');
@@ -34,9 +34,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/account/password', [AccountSettingController::class, 'updatePassword'])->name('account.password');
     Route::patch('/users/{user}/active', [UserController::class, 'activate'])->name('users.activate');
     Route::resource('users', UserController::class)->except(['show', 'edit', 'update']);
-    Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit',])->parameter('productcategories', 'productCategory');
+    Route::resource('productcategories', ProductCategoryController::class)->except(['show', 'edit'])->parameter('productcategories', 'productCategory');
     Route::resource('products', ProductController::class);
-    Route::resource('customers', CustomerController::class)->except(['create',]);
+    Route::resource('customers', CustomerController::class)->except(['create']);
     Route::resource('servicehistories', ServiceHistoryController::class)->parameter('servicehistories', 'serviceHistory');
     Route::get('servicehistories/{serviceHistory}/print', [ServiceHistoryController::class, 'print'])->name('servicehistories.print');
     Route::resource('orders', OrderController::class)->parameter('orders', 'order');

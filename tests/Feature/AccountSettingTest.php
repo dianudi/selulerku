@@ -5,13 +5,13 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AccountSettingTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
     public function test_user_can_visit_account_setting(): void
     {
         $this->actingAs(User::factory()->create());

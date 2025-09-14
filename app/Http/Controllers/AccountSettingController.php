@@ -22,6 +22,7 @@ class AccountSettingController extends Controller
         ]);
         $user = User::find(Auth::user()->id);
         $user->update($validated);
+
         return redirect()->route('account.index')->with('success', 'Account updated successfully');
     }
 
@@ -34,6 +35,7 @@ class AccountSettingController extends Controller
         ]);
         $user = User::find(Auth::user()->id);
         $user->update(['password' => Hash::make($validated['password'])]);
+
         return redirect()->route('account.index')->with('success', 'Password updated successfully');
     }
 }

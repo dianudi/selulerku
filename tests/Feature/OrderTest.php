@@ -53,6 +53,7 @@ class OrderTest extends TestCase
                         'quantity' => random_int(1, 2),
                     ]);
                 }
+
                 return $detail->toArray();
             })(),
 
@@ -99,7 +100,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 100),
-            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price,
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->put(route('orders.update', $order), [
@@ -113,8 +114,9 @@ class OrderTest extends TestCase
                         'quantity' => random_int(1, 5),
                     ]);
                 }
+
                 return $detail->toArray();
-            })()
+            })(),
         ], ['referer' => route('orders.edit', $order)]);
         $res->assertRedirect(route('orders.index'));
         $res->assertSessionHas('success');
@@ -142,7 +144,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price,
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->delete(route('orders.destroy', $order), [], ['referer' => route('orders.index')]);
@@ -150,13 +152,14 @@ class OrderTest extends TestCase
         $res->assertSessionHas('success');
         $this->assertDatabaseCount('orders', 0);
     }
+
     public function test_admin_cannot_delete_order_after_one_day()
     {
         $order = Order::factory()->createdAfter(now()->subDays(-1))->create();
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price,
         ]);
         $this->actingAs(User::factory()->create());
         $res = $this->delete(route('orders.destroy', $order), [], ['referer' => route('orders.index')]);
@@ -173,7 +176,7 @@ class OrderTest extends TestCase
         $order->details()->create([
             'product_id' => Product::factory()->create()->id,
             'quantity' => random_int(1, 10),
-            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price
+            'immutable_price' => Product::select('sell_price')->where('id', Product::factory()->create()->id)->first()->sell_price,
         ]);
         $res = $this->get(route('orders.print', $order));
         $res->assertStatus(200);

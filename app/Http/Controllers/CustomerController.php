@@ -16,7 +16,7 @@ class CustomerController extends Controller
         $query = Customer::with(['orders', 'serviceHistories'])->latest();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $customers = $query->paginate(12);
@@ -38,10 +38,12 @@ class CustomerController extends Controller
         ]);
         $validated['user_id'] = Auth::id();
         $customer = Customer::create($validated);
-        if ($request->acceptsHtml()) return redirect()->route('customers.index')->with('success', 'Customer created successfully');
+        if ($request->acceptsHtml()) {
+            return redirect()->route('customers.index')->with('success', 'Customer created successfully');
+        }
+
         return response()->json(['message' => 'Customer created successfully.', 'customer' => $customer]);
     }
-
 
     /**
      * Display the specified resource.
@@ -80,6 +82,7 @@ class CustomerController extends Controller
             'address' => 'required',
         ]);
         $customer->update($validated);
+
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully');
     }
 
@@ -88,8 +91,11 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        if ($customer->orders()->exists() || $customer->serviceHistories()->count() > 0) return redirect()->route('customers.index')->with('error', 'Customer cannot be deleted because it has associated orders.');
+        if ($customer->orders()->exists() || $customer->serviceHistories()->count() > 0) {
+            return redirect()->route('customers.index')->with('error', 'Customer cannot be deleted because it has associated orders.');
+        }
         $customer->delete();
+
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully');
     }
 }

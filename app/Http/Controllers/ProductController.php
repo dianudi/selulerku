@@ -37,7 +37,8 @@ class ProductController extends Controller
             return $product->orderDetails->sum('immutable_price');
         });
         $lowStockCount = Product::where('quantity', '<', 5)->count();
-        $products = $request->has('search') ? Product::where('name', 'like', '%' . $request->search . '%')->orderBy('name', 'asc')->paginate(15) : Product::orderBy('name', 'asc')->paginate(15);
+        $products = $request->has('search') ? Product::where('name', 'like', '%'.$request->search.'%')->orderBy('name', 'asc')->paginate(15) : Product::orderBy('name', 'asc')->paginate(15);
+
         return view('products.index', compact('products', 'productCount', 'productSoldCountToday', 'productSoldCountYesterday', 'productProfitToday', 'productProfitYesterday', 'lowStockCount'));
     }
 
@@ -46,9 +47,12 @@ class ProductController extends Controller
      */
     public function create()
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         $categories = ProductCategory::all();
+
         return view('products.create', compact('categories'));
     }
 
@@ -57,13 +61,18 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         $product = new Product($request->validated());
         $product->user_id = Auth::id();
         $product->image = $request->has('image') ? $request->image->store('products', 'public') : null;
         $product->save();
-        if ($request->acceptsHtml()) return redirect()->route('products.index')->with('success', 'Product created successfully');
+        if ($request->acceptsHtml()) {
+            return redirect()->route('products.index')->with('success', 'Product created successfully');
+        }
+
         return response()->json(['message' => 'Product created successfully.']);
     }
 
@@ -84,6 +93,7 @@ class ProductController extends Controller
         // if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
 
         $categories = ProductCategory::all();
+
         return view('products.edit', compact('product', 'categories'));
     }
 
@@ -92,14 +102,19 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         $data = $request->validated();
         if ($request->has('image')) {
             $data['image'] = $request->image->store('products', 'public');
         }
         $product->update($data);
-        if ($request->acceptsHtml()) return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        if ($request->acceptsHtml()) {
+            return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        }
+
         return response()->json(['message' => 'Product updated successfully.']);
     }
 
@@ -108,11 +123,18 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
-        if ($product->orderDetails()->exists()) return redirect()->route('products.index')->with('error', 'Product has order history. Cannot delete.');
-        if ($product->image) Storage::disk('public')->delete($product->image);
+        if ($product->orderDetails()->exists()) {
+            return redirect()->route('products.index')->with('error', 'Product has order history. Cannot delete.');
+        }
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
         $product->delete();
+
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
 }

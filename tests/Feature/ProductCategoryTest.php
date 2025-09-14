@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\ProductCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Testing\File;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductCategoryTest extends TestCase

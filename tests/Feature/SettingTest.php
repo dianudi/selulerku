@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class SettingTest extends TestCase
 {
     use RefreshDatabase;
+
     public function test_superadmin_can_visit_settings_page()
     {
         $this->actingAs(User::factory()->superadmin()->create());

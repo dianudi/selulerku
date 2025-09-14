@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreServiceHistoryRequest;
 use App\Http\Requests\UpdateServiceHistoryRequest;
-use App\Models\ServiceDetail;
 use App\Models\ServiceHistory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ServiceHistoryController extends Controller
 {
@@ -18,25 +17,25 @@ class ServiceHistoryController extends Controller
     public function index(Request $request)
     {
         // todo: admin can see all except for admin or cashier
-        $serviceHistories = ServiceHistory::with('customer', 'details')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+        $serviceHistories = ServiceHistory::with('customer', 'details')->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
         });
 
         if ($request->has('search')) {
             $serviceHistories->whereHas('customer', function ($query) use ($request) {
-                $query->where('name', 'like', '%' . $request->search . '%');
-            })->orWhere('invoice_number', 'like', '%' . $request->search . '%');
+                $query->where('name', 'like', '%'.$request->search.'%');
+            })->orWhere('invoice_number', 'like', '%'.$request->search.'%');
         }
 
         $serviceHistories = $serviceHistories->orderBy('created_at', 'desc')->paginate(10);
 
-        $pendingCount = ServiceHistory::where('status', 'pending')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+        $pendingCount = ServiceHistory::where('status', 'pending')->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->count();
-        $onProcessCount = ServiceHistory::where('status', 'on_process')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+        $onProcessCount = ServiceHistory::where('status', 'on_process')->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->count();
-        $doneCount = ServiceHistory::where('status', 'done')->when(!in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+        $doneCount = ServiceHistory::where('status', 'done')->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->count();
 
@@ -60,9 +59,9 @@ class ServiceHistoryController extends Controller
         $serviceHistory = new ServiceHistory([
             'user_id' => Auth::user()->id,
             'customer_id' => $data['customer_id'],
-            'invoice_number' => 'INV-' . $data['customer_id'] . '-' . now()->format('Y/m/d') . '-' . rand(1000, 9999) . '-' . rand(1000, 9999),
+            'invoice_number' => 'INV-'.$data['customer_id'].'-'.now()->format('Y/m/d').'-'.rand(1000, 9999).'-'.rand(1000, 9999),
             'warranty_expired_at' => $data['warranty_expired_at'],
-            'status' => $data['status']
+            'status' => $data['status'],
         ]);
         $serviceHistory->save();
 
@@ -84,7 +83,9 @@ class ServiceHistoryController extends Controller
      */
     public function show(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if ($serviceHistory->user_id !== Auth::user()->id && ! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         return view('serviceHistories.show', compact('serviceHistory'));
     }
@@ -94,7 +95,9 @@ class ServiceHistoryController extends Controller
      */
     public function edit(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if ($serviceHistory->user_id !== Auth::user()->id && ! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         return view('serviceHistories.edit', compact('serviceHistory'));
     }
@@ -104,12 +107,14 @@ class ServiceHistoryController extends Controller
      */
     public function update(UpdateServiceHistoryRequest $request, ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if ($serviceHistory->user_id !== Auth::user()->id && ! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
 
         $data = $request->validated();
         $serviceHistory->update([
             'total_revision' => $data['total_revision'],
-            'status' => $data['status']
+            'status' => $data['status'],
         ]);
         $serviceHistory->details()->delete();
         $serviceHistory->details()->createMany(collect($data['details'])->map(function ($detail) {
@@ -120,6 +125,7 @@ class ServiceHistoryController extends Controller
                 'cost_price' => $detail['cost_price'],
             ];
         })->toArray());
+
         return response()->json(['message' => 'Service History updated successfully.']);
     }
 
@@ -128,9 +134,12 @@ class ServiceHistoryController extends Controller
      */
     public function destroy(ServiceHistory $serviceHistory)
     {
-        if ($serviceHistory->user_id !== Auth::user()->id && !in_array(Auth::user()->role, ['admin', 'superadmin'])) return abort(403);
+        if ($serviceHistory->user_id !== Auth::user()->id && ! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
         $serviceHistory->details()->delete();
         $serviceHistory->delete();
+
         return redirect()->route('servicehistories.index')->with('success', 'Service History deleted successfully');
     }
 
@@ -139,6 +148,7 @@ class ServiceHistoryController extends Controller
         // if ($serviceHistory->user_id !== Auth::user()->id) return abort(403);
 
         $pdf = Pdf::loadView('serviceHistories.receipt', compact('serviceHistory'));
-        return $pdf->stream('receipt-' . str_replace('/', '-', $serviceHistory->invoice_number) . '.pdf');
+
+        return $pdf->stream('receipt-'.str_replace('/', '-', $serviceHistory->invoice_number).'.pdf');
     }
 }

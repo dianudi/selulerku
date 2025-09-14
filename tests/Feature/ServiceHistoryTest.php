@@ -45,14 +45,14 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
-                    'cost_price' => $this->faker->numberBetween(1000, 10000)
-                ]
-            ]
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
         ], ['accept' => 'application/json']);
         $response->assertJson(['message' => 'Service History created successfully.']);
         // $response->assertRedirect(route('servicehistories.index'));
         $this->assertDatabaseHas('service_histories', [
-            'customer_id' => $customerId
+            'customer_id' => $customerId,
         ]);
     }
 
@@ -69,13 +69,13 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
-                    'cost_price' => $this->faker->numberBetween(1000, 10000)
-                ]
-            ]
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
         ], ['referer' => route('servicehistories.create')]);
         // $response->assertRedirect(route('servicehistories.create'));
         $this->assertDatabaseMissing('service_histories', [
-            'invoice_number' => $this->faker->randomNumber()
+            'invoice_number' => $this->faker->randomNumber(),
         ]);
     }
 
@@ -114,9 +114,9 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
-                    'cost_price' => $this->faker->numberBetween(1000, 10000)
-                ]
-            ]
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Service History updated successfully.']);
@@ -138,9 +138,9 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
-                    'cost_price' => $this->faker->numberBetween(1000, 10000)
-                ]
-            ]
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
         $response->assertStatus(200);
         $this->assertDatabaseMissing('service_histories', [
@@ -161,9 +161,9 @@ class ServiceHistoryTest extends TestCase
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
-                    'cost_price' => $this->faker->numberBetween(1000, 10000)
-                ]
-            ]
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
         $response->assertStatus(200);
         $this->assertDatabaseMissing('service_histories', [
@@ -182,7 +182,7 @@ class ServiceHistoryTest extends TestCase
             'id' => $serviceHistory->id,
         ]);
         $this->assertDatabaseMissing('service_details', [
-            'service_history_id' => $serviceHistory->id
+            'service_history_id' => $serviceHistory->id,
         ]);
     }
 
