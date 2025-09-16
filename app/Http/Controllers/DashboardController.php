@@ -18,11 +18,18 @@ class DashboardController extends Controller
         $totalOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
         })->count();
-        $totalIncome = Order::with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+        $totalOrderGrossIncome = Order::with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
         })->get()->sum(function ($order) {
             return $order->details->sum(function ($detail) {
-                return $detail->immutable_price;
+                return $detail->immutable_sell_price;
+            });
+        });
+        $totalOrderNetIncome = $totalOrderGrossIncome - Order::with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+            return $query->where('user_id', Auth::user()->id);
+        })->get()->sum(function ($order) {
+            return $order->details->sum(function ($detail) {
+                return $detail->immutable_buy_price;
             });
         });
 
@@ -57,7 +64,7 @@ class DashboardController extends Controller
         $monthlyIncome = Order::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
             return $query->where('orders.user_id', Auth::user()->id);
         })->select(
-            DB::raw('sum(order_details.quantity * products.sell_price) as total'),
+            DB::raw('sum(order_details.immutable_sell_price) as total'),
             DB::raw("$monthExpression as month")
         )
             ->join('order_details', 'orders.id', '=', 'order_details.order_id')
@@ -117,7 +124,8 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'totalOrders',
-            'totalIncome',
+            'totalOrderGrossIncome',
+            'totalOrderNetIncome',
             'totalServiceHistories',
             'totalServiceGrossIncome',
             'totalServiceNetIncome',

@@ -18,7 +18,8 @@ return new class extends Migration
             $table->foreignIdFor(Order::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->integer('quantity');
-            $table->integer('immutable_price');
+            $table->integer('immutable_buy_price');
+            $table->integer('immutable_sell_price');
             $table->timestamps();
         });
     }

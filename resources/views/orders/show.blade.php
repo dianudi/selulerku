@@ -90,10 +90,11 @@
                                         </div>
                                     </td>
                                     <td class="text-center">{{ $detail->quantity }}</td>
-                                    <td class="text-right">Rp. {{ number_format($detail->immutable_price /
+                                    <td class="text-right">Rp. {{ number_format($detail->immutable_sell_price /
                                         $detail->quantity, 0, ',', '.')
                                         }}</td>
-                                    <td class="text-right">Rp. {{ number_format($detail->immutable_price, 0, ',', '.')
+                                    <td class="text-right">Rp. {{ number_format($detail->immutable_sell_price, 0, ',',
+                                        '.')
                                         }}</td>
                                 </tr>
                                 @endforeach
@@ -102,7 +103,7 @@
                                 <tr>
                                     <th colspan="3" class="text-right text-lg">Total</th>
                                     <th class="text-right text-lg">Rp. {{
-                                        number_format($order->details->sum('immutable_price'), 0, ',', '.') }}</th>
+                                        number_format($order->details->sum('immutable_sell_price'), 0, ',', '.') }}</th>
                                 </tr>
                             </tfoot>
                         </table>

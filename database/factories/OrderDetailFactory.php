@@ -22,7 +22,8 @@ class OrderDetailFactory extends Factory
             'order_id' => Order::factory()->create()->id,
             'product_id' => Product::factory()->create()->id,
             'quantity' => 10,
-            'immutable_price' => fake()->randomFloat(2, 1, 100),
+            'immutable_buy_price' => fake()->randomFloat(2, 1, 100),
+            'immutable_sell_price' => fake()->randomFloat(2, 1, 100),
         ];
     }
 

@@ -25,7 +25,7 @@ class ProductController extends Controller
         })->with(['orderDetails' => function ($query) {
             $query->where('created_at', '>=', now()->startOfDay());
         }])->get()->sum(function ($product) {
-            return $product->orderDetails->sum('immutable_price');
+            return $product->orderDetails->sum('immutable_sell_price');
         });
         $productProfitYesterday = Product::whereHas('orderDetails', function ($query) {
             $query->where('created_at', '>=', now()->startOfDay()->subDay())
@@ -34,7 +34,7 @@ class ProductController extends Controller
             $query->where('created_at', '>=', now()->startOfDay()->subDay())
                 ->where('created_at', '<', now()->startOfDay());
         }])->get()->sum(function ($product) {
-            return $product->orderDetails->sum('immutable_price');
+            return $product->orderDetails->sum('immutable_sell_price');
         });
         $lowStockCount = Product::where('quantity', '<', 5)->count();
         $products = $request->has('search') ? Product::where('name', 'like', '%'.$request->search.'%')->orderBy('name', 'asc')->paginate(15) : Product::orderBy('name', 'asc')->paginate(15);

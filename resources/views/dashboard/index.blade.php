@@ -22,8 +22,15 @@
                     <div class="stat-figure text-secondary">
                         <i class="bi bi-cash-coin text-3xl"></i>
                     </div>
-                    <div class="stat-title">Total Order Income</div>
-                    <div class="stat-value">Rp. {{ number_format($totalIncome, 0, ',', '.') }}</div>
+                    <div class="stat-title">Total Order Gross Income</div>
+                    <div class="stat-value">Rp. {{ number_format($totalOrderGrossIncome, 0, ',', '.') }}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="bi bi-cash-coin text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Total Order Net Income</div>
+                    <div class="stat-value">Rp. {{ number_format($totalOrderNetIncome, 0, ',', '.') }}</div>
                 </div>
 
 

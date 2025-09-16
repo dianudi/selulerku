@@ -27,12 +27,13 @@ class OrderController extends Controller
         $userOrders = Order::when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::id());
         });
-        $totalRevenue = OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_price');
+        $totalGrossRevenue = OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_sell_price');
+        $totalNetRevenue = $totalGrossRevenue - OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_buy_price');
         $totalOrders = $userOrders->clone()->count();
         $unpaidOrders = $userOrders->clone()->where('status', 'unpaid')->count();
         $paidOrders = $userOrders->clone()->where('status', 'paid')->count();
 
-        return view('orders.index', compact('orders', 'totalRevenue', 'totalOrders', 'unpaidOrders', 'paidOrders'));
+        return view('orders.index', compact('orders', 'totalGrossRevenue', 'totalNetRevenue', 'totalOrders', 'unpaidOrders', 'paidOrders'));
     }
 
     /**
@@ -72,7 +73,8 @@ class OrderController extends Controller
                     $details[] = [
                         'product_id' => $detail['product_id'],
                         'quantity' => $detail['quantity'],
-                        'immutable_price' => $product->sell_price * $detail['quantity'],
+                        'immutable_buy_price' => $product->buy_price * $detail['quantity'],
+                        'immutable_sell_price' => $product->sell_price * $detail['quantity'],
                     ];
                 }
 
@@ -154,7 +156,8 @@ class OrderController extends Controller
                         $newDetailsData[] = [
                             'product_id' => $detail['product_id'],
                             'quantity' => $detail['quantity'],
-                            'immutable_price' => $product->sell_price * $detail['quantity'],
+                            'immutable_buy_price' => $product->buy_price * $detail['quantity'],
+                            'immutable_sell_price' => $product->sell_price * $detail['quantity'],
                         ];
                     }
                 }

@@ -12,8 +12,17 @@
                     <div class="stat-figure text-secondary">
                         <i class="bi bi-cash-coin text-4xl"></i>
                     </div>
-                    <div class="stat-title">Total Revenue</div>
-                    <div class="stat-value">Rp. {{number_format($totalRevenue, 0, ',', '.')}}</div>
+                    <div class="stat-title">Total Gross Revenue</div>
+                    <div class="stat-value">Rp. {{number_format($totalGrossRevenue, 0, ',', '.')}}</div>
+                    <div class="stat-desc">From orders has been paid</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="bi bi-cash-coin text-4xl"></i>
+                    </div>
+                    <div class="stat-title">Total Net Revenue</div>
+                    <div class="stat-value">Rp. {{number_format($totalNetRevenue, 0, ',', '.')}}</div>
                     <div class="stat-desc">From orders has been paid</div>
                 </div>
 
@@ -75,22 +84,24 @@
             <ul class="list bg-base-100 rounded-box shadow-md">
                 @forelse ($orders as $order)
                 <li class="list-row">
-                    <div><img class="size-10 rounded-box"
+                    <div>
+                        <img class="size-10 rounded-box"
                             src="{{$order->details[0]->product->image ? asset('storage/'.$order->details[0]->product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
-                            </div>
-                        <div>
-                            <div class="text-xs uppercase font-semibold opacity-60">{{$order->invoice_number}}</div>
-                            <div> <a
-                                    href="{{ route('orders.show', ['order' => $order]) }}">{{$order->details[0]->product->name}}</a>
-                            </div>
-                            <div class="text-xs font-semibold opacity-60">{{$order->customer->name}}</div>
-                            <div class="text-xs text-green-500 font-semibold">Rp.
-                                {{number_format($order->details->sum('immutable_price'), 0, ',', '.')}} <span
-                                    class="uppercase font-bold @if($order->status == 'paid') text-success @elseif($order->status == 'unpaid') text-error @else text-warning @endif">({{$order->status}})</span>
-                            </div>
-                            <div class="text-xs font-semibold opacity-60">Cashier {{$order->user->name}}</div>
-
+                            alt="{{$order->details[0]->product->name}}" />
+                    </div>
+                    <div>
+                        <div class="text-xs uppercase font-semibold opacity-60">{{$order->invoice_number}}</div>
+                        <div> <a
+                                href="{{ route('orders.show', ['order' => $order]) }}">{{$order->details[0]->product->name}}</a>
                         </div>
+                        <div class="text-xs font-semibold opacity-60">{{$order->customer->name}}</div>
+                        <div class="text-xs text-green-500 font-semibold">Rp.
+                            {{number_format($order->details->sum('immutable_sell_price'), 0, ',', '.')}} <span
+                                class="uppercase font-bold @if($order->status == 'paid') text-success @elseif($order->status == 'unpaid') text-error @else text-warning @endif">({{$order->status}})</span>
+                        </div>
+                        <div class="text-xs font-semibold opacity-60">Cashier {{$order->user->name}}</div>
+
+                    </div>
 
                 </li>
                 @empty
