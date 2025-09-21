@@ -28,6 +28,24 @@
                                 href="{{ route('users.index')}}"><i class="bi bi-person-fill-gear"></i> User
                                 Management</a></li>
                 @endif
+                @if(auth()->user()->role == 'superadmin')
+                <ul class="menu p-0 rounded-box w-full">
+                        <li>
+                                <details open>
+                                        <summary
+                                                class="p-2 w-full  hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('report-analysis.*')) text-white bg-slate-800 @else text-slate-400 @endif">
+                                                <i class="bi bi-graph-up"></i> Report & Analysis
+                                        </summary>
+                                        <ul>
+                                                <li><a href="{{route('report-analysis.product-sales')}}">Product
+                                                                Sales</a></li>
+                                                <li><a href="{{route('report-analysis.service-history')}}">Service
+                                                                History</a></li>
+                                        </ul>
+                                </details>
+                        </li>
+                </ul>
+                @endif
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('settings.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('settings.index')}}"><i class="bi bi-gear"></i> Settings</a></li>
         </ul>

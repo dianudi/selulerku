@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportAnalysisController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ServiceHistoryController;
 use App\Http\Controllers\SettingController;
@@ -43,4 +44,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{order}/print', [OrderController::class, 'print'])->name('orders.print');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/report-analysis/product-sales', [ReportAnalysisController::class, 'productSales'])->name('report-analysis.product-sales');
+    Route::get('/report-analysis/service-history', [ReportAnalysisController::class, 'serviceHistory'])->name('report-analysis.service-history');
 });
