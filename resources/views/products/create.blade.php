@@ -17,8 +17,7 @@
                             <a href="{{route('productcategories.index')}}" class="hover:underline">Create
                                 One</a>
                         </div>
-                        <select name="product_category_id"
-                            class="select w-full">
+                        <select name="product_category_id" class="select w-full">
                             <option disabled selected>Pick a Category</option>
                             @foreach ($categories as $category)
                             <option value="{{$category->id}}">{{$category->name}}</option>
@@ -28,20 +27,20 @@
                     </fieldset>
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">Name</legend>
-                        <input name="name" type="text" value="{{old('name')}}"
-                            class="input w-full" placeholder="Type here" />
+                        <input name="name" type="text" value="{{old('name')}}" class="input w-full"
+                            placeholder="Type here" />
                         <div id="name" class="text-red-500 error-message"></div>
                     </fieldset>
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">Description</legend>
-                        <textarea class="textarea h-24 w-full"
-                            name="description" placeholder="Bio">{{old('description')}}</textarea>
+                        <textarea class="textarea h-24 w-full" name="description"
+                            placeholder="Bio">{{old('description')}}</textarea>
                         <div id="description" class="text-red-500 error-message"></div>
                     </fieldset>
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">SKU</legend>
-                        <input name="sku" type="text" value="{{old('sku')}}"
-                            class="input w-full" placeholder="Type here" />
+                        <input name="sku" type="text" value="{{old('sku')}}" class="input w-full"
+                            placeholder="Type here" />
                         <div id="sku" class="text-red-500 error-message"></div>
                     </fieldset>
                     <fieldset class="fieldset">
@@ -59,12 +58,11 @@
                     <fieldset class="fieldset">
                         <legend class="fieldset-legend">Sell Price</legend>
                         <input inputmode="numeric" name="sell_price" type="text" value="{{old('sell_price')}}"
-                            class="input w-full"
-                            placeholder="Type here" />
+                            class="input w-full" placeholder="Type here" />
                         <div id="sell_price" class="text-red-500 error-message"></div>
                     </fieldset>
                     <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Pick a file</legend>
+                        <legend class="fieldset-legend">Image</legend>
                         <input type="file" name="image"
                             onchange=" document.getElementById('modalPreviewProduct').src = window.URL.createObjectURL(this.files[0])"
                             class="file-input w-full" />

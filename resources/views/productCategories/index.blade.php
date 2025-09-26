@@ -1,5 +1,5 @@
 @extends('templates.base')
-@section('title', 'Product Categories Management')
+@section('title', 'Product Categories')
 @section('content')
 <div class="w-full">
     <div class="flex relative">
@@ -39,8 +39,7 @@
                 <li class="list-row">
                     <div class="flex items-center">
                         @if ($category->icon)
-                        <img class="size-10 rounded-box"
-                            src="{{ asset('storage/'.$category->icon) }}" />
+                        <img class="size-10 rounded-box" src="{{ asset('storage/'.$category->icon) }}" />
                         @else
                         <div class="size-10 rounded-box bg-gray-200 flex items-center justify-center">
                             <i class="bi bi-image text-2xl text-gray-400"></i>
@@ -92,8 +91,7 @@
                         <tr>
                             <th>
                                 @if ($category->icon)
-                                <img class="size-10 rounded-box"
-                                    src="{{ asset('storage/'.$category->icon) }}" />
+                                <img class="size-10 rounded-box" src="{{ asset('storage/'.$category->icon) }}" />
                                 @else
                                 <div class="size-10 rounded-box bg-gray-200 flex items-center justify-center">
                                     <i class="bi bi-image text-2xl text-gray-400"></i>

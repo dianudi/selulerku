@@ -20,6 +20,11 @@
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('servicehistories.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('servicehistories.index')}}"><i class="bi bi-card-checklist"></i> Service
                                 History</a></li>
+                @if(auth()->user()->role == 'admin' || auth()->user()->role == 'superadmin')
+                <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('expenses.*')) text-white bg-slate-800 @else text-slate-400 @endif"
+                                href="{{ route('expenses.index')}}"><i class="bi bi-cash-stack"></i>
+                                Expenses</a></li>
+                @endif
                 <li><a class="p-2 w-full block hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('customers.*')) text-white bg-slate-800 @else text-slate-400 @endif"
                                 href="{{ route('customers.index')}}"><i class="bi bi-people"></i> Customer
                                 Management</a></li>
@@ -31,7 +36,7 @@
                 @if(auth()->user()->role == 'superadmin')
                 <ul class="menu p-0 rounded-box w-full">
                         <li>
-                                <details open>
+                                <details>
                                         <summary
                                                 class="p-2 w-full  hover:text-white hover:bg-slate-800 rounded-2xl @if(request()->routeIs('report-analysis.*')) text-white bg-slate-800 @else text-slate-400 @endif">
                                                 <i class="bi bi-graph-up"></i> Report & Analysis
