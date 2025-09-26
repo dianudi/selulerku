@@ -15,8 +15,8 @@ class CustomerController extends Controller
     {
         $query = Customer::with(['orders', 'serviceHistories'])->latest();
 
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+        if ($request->query('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
 
         $customers = $query->paginate(12);

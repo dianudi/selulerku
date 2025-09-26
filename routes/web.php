@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountSettingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => redirect()->route('dashboard.index'))->name('home');
+Route::get('/', fn() => redirect()->route('dashboard.index'))->name('home');
 
 // Authentication
 Route::get('/login', [AuthController::class, 'login'])->middleware('guest')->name('auth.login');
@@ -46,4 +47,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
     Route::get('/report-analysis/product-sales', [ReportAnalysisController::class, 'productSales'])->name('report-analysis.product-sales');
     Route::get('/report-analysis/service-history', [ReportAnalysisController::class, 'serviceHistory'])->name('report-analysis.service-history');
+    Route::resource('expenses', ExpenseController::class);
 });

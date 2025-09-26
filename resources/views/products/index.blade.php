@@ -34,7 +34,7 @@
                 </div>
 
                 <div class="stat place-items-center">
-                    <div class="stat-title">Profit Today</div>
+                    <div class="stat-title">Gross Revenue Today</div>
                     <div class="stat-value">Rp. {{number_format($productProfitToday, 0, ',', '.')}}</div>
                     @php
                     $profitDiff = $productProfitToday - $productProfitYesterday;
@@ -95,7 +95,7 @@
                     <h2 class="text-lg font-bold">Product List</h2>
                     <div class="flex flex-wrap gap-1 justify-between lg:justify-start">
                         @forelse ($products as $product)
-                        <div class="card bg-base-100 w-56 shadow-sm">
+                        <div class="card bg-base-100 w-48 shadow-sm">
                             <figure>
                                 <img class="h-48 object-cover"
                                     src="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
@@ -137,6 +137,7 @@
                     @empty
                     <div class="text-center w-full text-lg">No products found</div>
                     @endforelse
+                    {{$products->links()}}
                 </div>
             </div>
             {{-- Cart start --}}
