@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ExpenseController extends Controller
 {
+    public function __construct()
+    {
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -59,6 +66,10 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
+
         return view('expenses.edit', compact('expense'));
     }
 
@@ -67,6 +78,9 @@ class ExpenseController extends Controller
      */
     public function update(UpdateExpenseRequest $request, Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
         if ($expense->created_at < now()->subDay(2)) {
             return back()->with('error', 'Expense cannot be deleted because it is older than 2 days.');
         }
@@ -85,6 +99,9 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
         if ($expense->created_at < now()->subDay(2)) {
             return redirect()->route('expenses.index')->with('error', 'Expense cannot be deleted because it is older than 2 days.');
         }

@@ -176,4 +176,12 @@ class ExpenseTest extends TestCase
         $res->assertSessionHas('error');
         $this->assertDatabaseHas('expenses', ['id' => $expense->id]);
     }
+
+    public function test_not_superadmin_cannot_visit_expense(): void
+    {
+        $user = User::factory()->cashier()->create();
+        $this->actingAs($user);
+        $res = $this->get(route('expenses.index'));
+        $res->assertStatus(403);
+    }
 }
