@@ -90,164 +90,117 @@
             {{-- search product end --}}
 
             {{-- product list card start --}}
-            <div class="flex-auto mt-6">
-                <h2 class="text-2xl font-bold mb-4">Product List</h2>
-
-                @if ($products->count())
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                    @foreach ($products as $product)
-                    <div
-                        class="card bg-base-100 shadow-lg rounded-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl">
-                        <figure class="relative">
-                            {{-- Admin Actions --}}
-                            @if (auth()->user()->role != 'cashier')
-                            <div class="absolute top-2 right-2 z-10 flex gap-2">
-                                <a href="{{ route('products.edit', $product->id) }}"
-                                    class="btn btn-circle btn-sm btn-info opacity-80 hover:opacity-100">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="btn btn-circle btn-sm btn-error opacity-80 hover:opacity-100">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
+            <div class="flex gap-1 mt-5 ">
+                <div class="flex-auto">
+                    <h2 class="text-lg font-bold">Product List</h2>
+                    <div class="flex flex-wrap gap-4 justify-between lg:justify-start">
+                        @forelse ($products as $product)
+                        <div class="card bg-base-100 w-40 shadow-sm">
+                            <figure>
+                                <img class="h-48 object-cover"
+                                    src="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
+                                    alt="{{$product->name}}" />
+                            </figure>
+                            <div class="card-body p-3 flex flex-col">
+                                <div class="flex-grow">
+                                    <div class="flex justify-between items-start">
+                                        <div class="badge badge-outline">{{$product->category->name}}</div>
+                                        @if ($product->created_at->diffInDays() < 7) <div
+                                            class="badge badge-secondary badge-outline text-xs">New
+                                    </div>
+                                    @endif
+                                </div>
+                                <h2 class="card-title text-base mt-2">
+                                    <a class="hover:underline"
+                                        href="{{route('products.edit', $product->id)}}">{{$product->name}}</a>
+                                </h2>
+                                <p class="text-lg font-bold mt-1">Rp. {{ number_format($product->sell_price, 0, ',',
+                                    '.') }}
+                                </p>
                             </div>
-                            @endif
-
-                            {{-- Product Image --}}
-                            <div class="aspect-square w-full">
-                                <img class="h-full w-full object-cover"
-                                    src="{{ $product->image ? asset('storage/' . $product->image) : 'https://img.icons8.com/clouds/400/no-image.png' }}"
-                                    alt="{{ $product->name }}" />
+                            <div class="flex justify-between items-center mt-2">
+                                <div class="text-sm">
+                                    <span class="font-semibold {{ $product->quantity < 5 ? 'text-error' : '' }}">Stock:
+                                        {{$product->quantity}}</span>
+                                    <span class="mx-1">|</span>
+                                    <span>Sold: {{$product->orderDetails()->sum('quantity')}}</span>
+                                </div>
+                                <button type="button" data-id="{{$product->id}}" data-product-name="{{$product->name}}"
+                                    data-product-price="{{$product->sell_price}}"
+                                    data-product-image="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
+                                    class="add-to-cart btn btn-sm btn-primary active:scale-90 transition-all">
+                                    <i class="bi bi-cart-plus text-lg"></i>
+                                </button>
                             </div>
-
-                            {{-- New Badge --}}
-                            @if ($product->created_at->diffInDays() < 7) <div
-                                class="badge badge-secondary absolute top-2 left-2">NEW
-                    </div>
-                    @endif
-                    </figure>
-
-                    <div class="card-body p-4 flex-grow">
-                        {{-- Category --}}
-                        <div class="badge badge-outline mb-2">{{ $product->category->name }}</div>
-
-                        {{-- Product Name --}}
-                        <h2 class="card-title text-lg font-bold leading-tight">
-                            {{ $product->name }}
-                        </h2>
-
-                        {{-- Price --}}
-                        <p class="text-xl font-extrabold text-primary mt-1">
-                            Rp. {{ number_format($product->sell_price, 0, ',', '.') }}
-                        </p>
-
-                        {{-- Stock Info --}}
-                        <div @class([ 'text-sm mt-2' , 'text-error font-bold'=> $product->quantity < 5, ])>
-                                Stock: {{ $product->quantity }}
                         </div>
                     </div>
-
-                    {{-- Action Button --}}
-                    <div class="card-actions p-4 pt-0">
-                        <button type="button" data-id="{{ $product->id }}" data-product-name="{{ $product->name }}"
-                            data-product-price="{{ $product->sell_price }}"
-                            data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://img.icons8.com/clouds/400/no-image.png' }}"
-                            class="add-to-cart btn btn-primary w-full active:scale-95 transition-transform">
-                            <i class="bi bi-cart-plus text-lg"></i>
-                            Add to Cart
-                        </button>
-                    </div>
+                    @empty
+                    <div class="text-center w-full text-lg">No products found</div>
+                    @endforelse
                 </div>
-                @endforeach
+                {{$products->links()}}
             </div>
-
-            {{-- Pagination --}}
-            <div class="mt-8">
-                {{ $products->links() }}
-            </div>
-            @else
-            {{-- Empty State --}}
-            <div class="text-center py-16 px-4 bg-base-200 rounded-lg">
-                <i class="bi bi-box-seam text-6xl text-gray-400"></i>
-                <h3 class="text-2xl font-bold mt-4">No Products Found</h3>
-                <p class="text-gray-500 mt-2">It looks like there are no products here yet.</p>
-                @if (auth()->user()->role != 'cashier')
-                <div class="mt-6">
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">
-                        <i class="bi bi-plus-lg"></i>
-                        Add Your First Product
-                    </a>
+            {{-- Cart start --}}
+            <div id="cart-sidebar-container" class="hidden lg:block min-w-[400px] px-2 border-l border-slate-700">
+                @if (session()->has('error'))
+                <div role="alert" class="alert alert-error">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{session('error')}}.</span>
                 </div>
                 @endif
-            </div>
-            @endif
-        </div>
-    </div>
-    {{-- Cart start --}}
-    <div id="cart-sidebar-container" class="hidden lg:block min-w-[400px] px-2 border-l border-slate-700">
-        @if (session()->has('error'))
-        <div role="alert" class="alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
-                viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>{{session('error')}}.</span>
-        </div>
-        @endif
-        <div id="cart">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-lg font-bold">Carts</h2>
-                <button type="button" id="reset-cart-button" class="btn btn-sm btn-neutral">Reset</button>
-            </div>
-            <form id="orderForm" action="{{route('orders.store')}}" method="POST">
-                @csrf
-                <ul id="cart-items" class="list bg-base-100 rounded-box shadow-md">
-                    <!-- Cart items will be injected here by JavaScript -->
-                </ul>
-                <div id="empty-cart-message" class="text-center py-4 hidden">
-                    <p>Your cart is empty.</p>
-                </div>
-
-                <div class="p-2 rounded-md">
-                    <div class="flex justify-between items-center font-bold">
-                        <span>Subtotal</span>
-                        <span id="cart-subtotal">Rp. 0</span>
+                <div id="cart">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="text-lg font-bold">Carts</h2>
+                        <button type="button" id="reset-cart-button" class="btn btn-sm btn-neutral">Reset</button>
                     </div>
-                    <div class="flex justify-between items-center font-bold mt-2">
-                        <span>Total</span>
-                        <span id="cart-total">Rp. 0</span>
-                    </div>
-                </div>
+                    <form id="orderForm" action="{{route('orders.store')}}" method="POST">
+                        @csrf
+                        <ul id="cart-items" class="list bg-base-100 rounded-box shadow-md">
+                            <!-- Cart items will be injected here by JavaScript -->
+                        </ul>
+                        <div id="empty-cart-message" class="text-center py-4 hidden">
+                            <p>Your cart is empty.</p>
+                        </div>
 
-                <div class=" p-2 rounded-md  flex items-center justify-between">
-                    <span id="selected-customer-name" class="text-gray-500">No customer selected</span>
-                    <button type="button" onclick="customer_selection_modal.showModal()" class="btn btn-sm">Select
-                        Customer</button>
+                        <div class="p-2 rounded-md">
+                            <div class="flex justify-between items-center font-bold">
+                                <span>Subtotal</span>
+                                <span id="cart-subtotal">Rp. 0</span>
+                            </div>
+                            <div class="flex justify-between items-center font-bold mt-2">
+                                <span>Total</span>
+                                <span id="cart-total">Rp. 0</span>
+                            </div>
+                        </div>
+
+                        <div class=" p-2 rounded-md  flex items-center justify-between">
+                            <span id="selected-customer-name" class="text-gray-500">No customer selected</span>
+                            <button type="button" onclick="customer_selection_modal.showModal()"
+                                class="btn btn-sm">Select
+                                Customer</button>
+                        </div>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Status</legend>
+                            <select name="status" class="select w-full">
+                                <option value="paid">Paid</option>
+                                <option value="unpaid">Unpaid</option>
+                                <option value="canceled">Canceled</option>
+                            </select>
+                        </fieldset>
+                        <input type="hidden" name="customer_id" id="customer_id_hidden">
+                        <button id="checkout" type="submit"
+                            class="btn btn-primary w-full mx-auto block md:max-w-xs my-3">Checkout</button>
+                    </form>
                 </div>
-                <fieldset class="fieldset">
-                    <legend class="fieldset-legend">Status</legend>
-                    <select name="status" class="select w-full">
-                        <option value="paid">Paid</option>
-                        <option value="unpaid">Unpaid</option>
-                        <option value="canceled">Canceled</option>
-                    </select>
-                </fieldset>
-                <input type="hidden" name="customer_id" id="customer_id_hidden">
-                <button id="checkout" type="submit"
-                    class="btn btn-primary w-full mx-auto block md:max-w-xs my-3">Checkout</button>
-            </form>
+            </div>
+            {{-- Cart end --}}
         </div>
-    </div>
-    {{-- Cart end --}}
-</div>
 
-</div>
+    </div>
 </div>
 </div>
 <x-customer-selection-modal />
