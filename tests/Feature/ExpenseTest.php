@@ -5,13 +5,13 @@ namespace Tests\Feature;
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Testing\File;
 use Tests\TestCase;
 
 class ExpenseTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A basic feature test example.
      */
@@ -175,5 +175,13 @@ class ExpenseTest extends TestCase
         $res->assertRedirect(route('expenses.index'));
         $res->assertSessionHas('error');
         $this->assertDatabaseHas('expenses', ['id' => $expense->id]);
+    }
+
+    public function test_not_superadmin_cannot_visit_expense(): void
+    {
+        $user = User::factory()->cashier()->create();
+        $this->actingAs($user);
+        $res = $this->get(route('expenses.index'));
+        $res->assertStatus(403);
     }
 }

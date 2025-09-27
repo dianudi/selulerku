@@ -125,7 +125,7 @@
                 @endif
 
                 <form action="{{ route('orders.destroy', $order) }}" method="POST"
-                    onsubmit="return confirm('Anda yakin ingin menghapus pesanan ini? Stok akan dikembalikan.');">
+                    onsubmit="return confirm('Are you sure you want to delete this order?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-error">

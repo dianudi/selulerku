@@ -90,54 +90,105 @@
             {{-- search product end --}}
 
             {{-- product list card start --}}
-            <div class="flex gap-1 mt-5 ">
-                <div class="flex-auto">
-                    <h2 class="text-lg font-bold">Product List</h2>
-                    <div class="flex flex-wrap gap-1 justify-between lg:justify-start">
-                        @forelse ($products as $product)
-                        <div class="card bg-base-100 w-48 shadow-sm">
-                            <figure>
-                                <img class="h-48 object-cover"
-                                    src="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
-                                    alt="{{$product->name}}" />
-                            </figure>
-                            <div class="card-body p-3 flex flex-col">
-                                <div class="flex-grow">
-                                    <div class="flex justify-between items-start">
-                                        <div class="badge badge-outline">{{$product->category->name}}</div>
-                                        @if ($product->created_at->diffInDays() < 7) <div
-                                            class="badge badge-secondary badge-outline text-xs">New
-                                    </div>
+            <div class="flex-auto mt-6">
+                <h2 class="text-2xl font-bold mb-4">Product List</h2>
+
+                @if ($products->count())
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                        @foreach ($products as $product)
+                            <div
+                                class="card bg-base-100 shadow-lg rounded-lg overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl">
+                                <figure class="relative">
+                                    {{-- Admin Actions --}}
+                                    @if (auth()->user()->role != 'cashier')
+                                        <div class="absolute top-2 right-2 z-10 flex gap-2">
+                                            <a href="{{ route('products.edit', $product->id) }}"
+                                                class="btn btn-circle btn-sm btn-info opacity-80 hover:opacity-100">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-circle btn-sm btn-error opacity-80 hover:opacity-100">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     @endif
+
+                                    {{-- Product Image --}}
+                                    <div class="aspect-square w-full">
+                                        <img class="h-full w-full object-cover"
+                                            src="{{ $product->image ? asset('storage/' . $product->image) : 'https://img.icons8.com/clouds/400/no-image.png' }}"
+                                            alt="{{ $product->name }}" />
+                                    </div>
+
+                                    {{-- New Badge --}}
+                                    @if ($product->created_at->diffInDays() < 7)
+                                        <div class="badge badge-secondary absolute top-2 left-2">NEW</div>
+                                    @endif
+                                </figure>
+
+                                <div class="card-body p-4 flex-grow">
+                                    {{-- Category --}}
+                                    <div class="badge badge-outline mb-2">{{ $product->category->name }}</div>
+
+                                    {{-- Product Name --}}
+                                    <h2 class="card-title text-lg font-bold leading-tight">
+                                        {{ $product->name }}
+                                    </h2>
+
+                                    {{-- Price --}}
+                                    <p class="text-xl font-extrabold text-primary mt-1">
+                                        Rp. {{ number_format($product->sell_price, 0, ',', '.') }}
+                                    </p>
+
+                                    {{-- Stock Info --}}
+                                    <div @class([
+                                        'text-sm mt-2',
+                                        'text-error font-bold' => $product->quantity < 5,
+                                    ])>
+                                        Stock: {{ $product->quantity }}
+                                    </div>
                                 </div>
-                                <h2 class="card-title text-base mt-2">
-                                    <a class="hover:underline"
-                                        href="{{route('products.edit', $product->id)}}">{{$product->name}}</a>
-                                </h2>
-                                <p class="text-lg font-bold mt-1">Rp. {{ number_format($product->sell_price, 0, ',',
-                                    '.') }}
-                                </p>
-                            </div>
-                            <div class="flex justify-between items-center mt-2">
-                                <div class="text-sm">
-                                    <span class="font-semibold {{ $product->quantity < 5 ? 'text-error' : '' }}">Stock:
-                                        {{$product->quantity}}</span>
-                                    <span class="mx-1">|</span>
-                                    <span>Sold: {{$product->orderDetails()->sum('quantity')}}</span>
+
+                                {{-- Action Button --}}
+                                <div class="card-actions p-4 pt-0">
+                                    <button type="button" data-id="{{ $product->id }}"
+                                        data-product-name="{{ $product->name }}"
+                                        data-product-price="{{ $product->sell_price }}"
+                                        data-product-image="{{ $product->image ? asset('storage/' . $product->image) : 'https://img.icons8.com/clouds/400/no-image.png' }}"
+                                        class="add-to-cart btn btn-primary w-full active:scale-95 transition-transform">
+                                        <i class="bi bi-cart-plus text-lg"></i>
+                                        Add to Cart
+                                    </button>
                                 </div>
-                                <button type="button" data-id="{{$product->id}}" data-product-name="{{$product->name}}"
-                                    data-product-price="{{$product->sell_price}}"
-                                    data-product-image="{{$product->image ? asset('storage/'.$product->image) : 'https://img.icons8.com/liquid-glass/200/no-image.png'}}"
-                                    class="add-to-cart btn btn-sm btn-primary active:scale-90 transition-all">
-                                    <i class="bi bi-cart-plus text-lg"></i>
-                                </button>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
-                    @empty
-                    <div class="text-center w-full text-lg">No products found</div>
-                    @endforelse
-                    {{$products->links()}}
+
+                    {{-- Pagination --}}
+                    <div class="mt-8">
+                        {{ $products->links() }}
+                    </div>
+                @else
+                    {{-- Empty State --}}
+                    <div class="text-center py-16 px-4 bg-base-200 rounded-lg">
+                        <i class="bi bi-box-seam text-6xl text-gray-400"></i>
+                        <h3 class="text-2xl font-bold mt-4">No Products Found</h3>
+                        <p class="text-gray-500 mt-2">It looks like there are no products here yet.</p>
+                        @if (auth()->user()->role != 'cashier')
+                            <div class="mt-6">
+                                <a href="{{ route('products.create') }}" class="btn btn-primary">
+                                    <i class="bi bi-plus-lg"></i>
+                                    Add Your First Product
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @endif
                 </div>
             </div>
             {{-- Cart start --}}

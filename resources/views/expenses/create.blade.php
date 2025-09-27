@@ -31,8 +31,8 @@
                 </fieldset>
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend">Payment Method</legend>
-                    <input inputmode="numeric" name="payment_method" type="text" value="{{old('payment_method')}}"
-                        class="input w-full" placeholder="Type here" />
+                    <input name="payment_method" type="text" value="{{old('payment_method')}}" class="input w-full"
+                        placeholder="Type here" />
                     <div id="payment_method" class="text-red-500 error-message"></div>
                 </fieldset>
                 <fieldset class="fieldset">

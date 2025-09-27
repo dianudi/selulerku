@@ -11,12 +11,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ExpenseController extends Controller
 {
+    public function __construct()
+    {
+        if (! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
+            return abort(403);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $expenses = $request->query('search') ? Expense::where('description', 'like', '%' . $request->query('search') . '%')->orderBy('created_at', 'desc')->paginate(15) : Expense::orderBy('created_at', 'desc')->paginate(15);
+        $expenses = $request->query('search') ? Expense::where('description', 'like', '%'.$request->query('search').'%')->orderBy('created_at', 'desc')->paginate(15) : Expense::orderBy('created_at', 'desc')->paginate(15);
+
         return view('expenses.index', compact('expenses'));
     }
 
@@ -41,6 +49,7 @@ class ExpenseController extends Controller
         if ($request->acceptsHtml()) {
             return redirect()->route('expenses.index')->with('success', 'Expense created successfully');
         }
+
         return response()->json(['success' => true, 'message' => 'Expense created successfully'], 201);
     }
 
@@ -57,6 +66,10 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
+
         return view('expenses.edit', compact('expense'));
     }
 
@@ -65,6 +78,9 @@ class ExpenseController extends Controller
      */
     public function update(UpdateExpenseRequest $request, Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
         if ($expense->created_at < now()->subDay(2)) {
             return back()->with('error', 'Expense cannot be deleted because it is older than 2 days.');
         }
@@ -74,6 +90,7 @@ class ExpenseController extends Controller
         if ($request->acceptsHtml()) {
             return redirect()->route('expenses.index')->with('success', 'Expense updated successfully');
         }
+
         return response()->json(['success' => true, 'message' => 'Expense updated successfully'], 200);
     }
 
@@ -82,6 +99,9 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
+        if (Auth::user()->role !== 'superadmin' && $expense->user_id !== Auth::id()) {
+            return abort(403);
+        }
         if ($expense->created_at < now()->subDay(2)) {
             return redirect()->route('expenses.index')->with('error', 'Expense cannot be deleted because it is older than 2 days.');
         }
@@ -89,6 +109,7 @@ class ExpenseController extends Controller
             Storage::disk('public')->delete($expense->receipt_image_path);
         }
         $expense->delete();
+
         return redirect()->route('expenses.index')->with('success', 'Expense deleted successfully');
     }
 }
