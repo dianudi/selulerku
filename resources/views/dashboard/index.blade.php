@@ -8,15 +8,7 @@
             <x-navbar />
 
             {{-- Stats --}}
-            <div class="stats shadow w-full my-4">
-
-                <div class="stat">
-                    <div class="stat-figure text-secondary">
-                        <i class="bi bi-cart text-3xl"></i>
-                    </div>
-                    <div class="stat-title">Total Orders</div>
-                    <div class="stat-value">{{ $totalOrders }}</div>
-                </div>
+            <div class="stats shadow w-full my-4  xl:grid-rows-2">
 
                 <div class="stat">
                     <div class="stat-figure text-secondary">
@@ -24,6 +16,8 @@
                     </div>
                     <div class="stat-title">Total Order Gross Income</div>
                     <div class="stat-value">Rp. {{ number_format($totalOrderGrossIncome, 0, ',', '.') }}</div>
+                    <div class="stat-desc">{{ $totalOrders }} orders</div>
+
                 </div>
                 <div class="stat">
                     <div class="stat-figure text-secondary">
@@ -33,24 +27,15 @@
                     <div class="stat-value">Rp. {{ number_format($totalOrderNetIncome, 0, ',', '.') }}</div>
                 </div>
 
-
-                <div class="stat">
-                    <div class="stat-figure text-secondary">
-                        <i class="bi bi-tools text-3xl"></i>
-                    </div>
-                    <div class="stat-title">Total Service Histories</div>
-                    <div class="stat-value">{{ $totalServiceHistories }}</div>
-                </div>
-
                 <div class="stat">
                     <div class="stat-figure text-secondary">
                         <i class="bi bi-wallet2 text-3xl"></i>
                     </div>
                     <div class="stat-title">Total Service Gross Income</div>
                     <div class="stat-value">Rp. {{ number_format($totalServiceGrossIncome, 0, ',', '.') }}</div>
+                    <div class="stat-desc">{{ $totalServiceHistories }} services</div>
+
                 </div>
-
-
 
                 <div class="stat">
                     <div class="stat-figure text-secondary">
@@ -58,6 +43,24 @@
                     </div>
                     <div class="stat-title">Total Service Net Income</div>
                     <div class="stat-value">Rp. {{ number_format($totalServiceNetIncome, 0, ',', '.') }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="bi bi-arrow-down-circle text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Total Expenses</div>
+                    <div class="stat-value">Rp. {{ number_format($totalExpenses, 0, ',', '.') }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-figure text-secondary">
+                        <i class="bi bi-graph-up-arrow text-3xl"></i>
+                    </div>
+                    <div class="stat-title">Total Net Income</div>
+                    <div class="stat-value">Rp. {{ number_format($totalNetIncome, 0, ',', '.') }}</div>
+                    <div class="stat-desc">after expenses calculated</div>
+
                 </div>
             </div>
 

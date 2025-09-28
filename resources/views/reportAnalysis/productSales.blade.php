@@ -29,6 +29,10 @@
                                 '.') }}/transaction</div>
                         </div>
                         <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($monthExpenses ?? 0, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="stat">
                             <div class="stat-title">Highest Net Revenue</div>
                             <div class="stat-value">Rp {{ number_format($maxNetIncomeThisMonth ?? 0, 0, ',', '.') }}
                             </div>
@@ -56,6 +60,10 @@
                                 }}/transaction</div>
                         </div>
                         <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($weekExpenses ?? 0, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="stat">
                             <div class="stat-title">Highest Net Revenue</div>
                             <div class="stat-value">Rp {{ number_format($maxNetIncomeThisWeek ?? 0, 0, ',', '.') }}
                             </div>
@@ -81,6 +89,10 @@
                                 0, ',', '.') }}</div>
                             <div class="stat-desc">Avg: Rp {{ number_format($averageThisDayNetIncome ?? 0, 0, ',', '.')
                                 }}/transaction</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($dayExpenses ?? 0, 0, ',', '.') }}</div>
                         </div>
                         <div class="stat">
                             <div class="stat-title">Highest Net Revenue</div>

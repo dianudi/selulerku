@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ServiceHistory;
@@ -28,6 +29,10 @@ class ReportAnalysisController extends Controller
                 )->first();
         };
 
+        $calculateExpenses = function ($dateQuery) {
+            return Expense::where($dateQuery)->sum('amount');
+        };
+
         // Define date range queries for each period to be reused
         $allTimeQuery = function ($query) { /* No date conditions for all time */
         };
@@ -47,6 +52,18 @@ class ReportAnalysisController extends Controller
         $weekStats = $calculateStats($thisWeekQuery);
         $dayStats = $calculateStats($thisDayQuery);
 
+        // Expenses
+        $allExpenses = $calculateExpenses(function ($query) {});
+        $monthExpenses = $calculateExpenses(function ($query) {
+            $query->whereBetween('expense_date', [now()->startOfMonth(), now()->endOfMonth()]);
+        });
+        $weekExpenses = $calculateExpenses(function ($query) {
+            $query->whereBetween('expense_date', [now()->startOfWeek(), now()->endOfWeek()]);
+        });
+        $dayExpenses = $calculateExpenses(function ($query) {
+            $query->whereDate('expense_date', today());
+        });
+
         // Order Analysis
         $totalAllOrders = Order::count();
         $totalThisMonthOrders = Order::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
@@ -60,10 +77,10 @@ class ReportAnalysisController extends Controller
         $totalThisDayOrderGrossIncome = $dayStats->gross_income ?? 0;
 
         // Net Income
-        $totalAllOrderNetIncome = $totalAllOrderGrossIncome - ($allStats->total_cost ?? 0);
-        $totalThisMonthOrderNetIncome = $totalThisMonthOrderGrossIncome - ($monthStats->total_cost ?? 0);
-        $totalThisWeekOrderNetIncome = $totalThisWeekOrderGrossIncome - ($weekStats->total_cost ?? 0);
-        $totalThisDayOrderNetIncome = $totalThisDayOrderGrossIncome - ($dayStats->total_cost ?? 0);
+        $totalAllOrderNetIncome = $totalAllOrderGrossIncome - ($allStats->total_cost ?? 0) - $allExpenses;
+        $totalThisMonthOrderNetIncome = $totalThisMonthOrderGrossIncome - ($monthStats->total_cost ?? 0) - $monthExpenses;
+        $totalThisWeekOrderNetIncome = $totalThisWeekOrderGrossIncome - ($weekStats->total_cost ?? 0) - $weekExpenses;
+        $totalThisDayOrderNetIncome = $totalThisDayOrderGrossIncome - ($dayStats->total_cost ?? 0) - $dayExpenses;
 
         // Average Gross Income
         $averageAllGrossIncome = $totalAllOrders > 0 ? $totalAllOrderGrossIncome / $totalAllOrders : 0;
@@ -141,7 +158,11 @@ class ReportAnalysisController extends Controller
             'maxNetIncomeThisDay',
             'minNetIncomeThisMonth',
             'minNetIncomeThisWeek',
-            'minNetIncomeThisDay'
+            'minNetIncomeThisDay',
+            'allExpenses',
+            'monthExpenses',
+            'weekExpenses',
+            'dayExpenses'
         ));
     }
 
@@ -167,6 +188,10 @@ class ReportAnalysisController extends Controller
                 ->sum(DB::raw('service_details.cost_price - service_details.price'));
         };
 
+        $calculateExpenses = function ($dateQuery) {
+            return Expense::where($dateQuery)->sum('amount');
+        };
+
         // Define date range queries for each period to be reused
         $thisMonthQuery = function ($query) {
             $query->whereBetween('service_histories.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
@@ -182,6 +207,17 @@ class ReportAnalysisController extends Controller
         $monthStats = $calculateStats($thisMonthQuery);
         $weekStats = $calculateStats($thisWeekQuery);
         $dayStats = $calculateStats($thisDayQuery);
+
+        // Expenses
+        $monthExpenses = $calculateExpenses(function ($query) {
+            $query->whereBetween('expense_date', [now()->startOfMonth(), now()->endOfMonth()]);
+        });
+        $weekExpenses = $calculateExpenses(function ($query) {
+            $query->whereBetween('expense_date', [now()->startOfWeek(), now()->endOfWeek()]);
+        });
+        $dayExpenses = $calculateExpenses(function ($query) {
+            $query->whereDate('expense_date', today());
+        });
 
         // Calculate losses for each period
         $totalThisMonthLoss = $calculateLoss($thisMonthQuery);
@@ -199,9 +235,9 @@ class ReportAnalysisController extends Controller
         $totalThisDayServiceGrossIncome = $dayStats->gross_income ?? 0;
 
         // Net Income
-        $totalThisMonthServiceNetIncome = $totalThisMonthServiceGrossIncome - ($monthStats->total_cost ?? 0);
-        $totalThisWeekServiceNetIncome = $totalThisWeekServiceGrossIncome - ($weekStats->total_cost ?? 0);
-        $totalThisDayServiceNetIncome = $totalThisDayServiceGrossIncome - ($dayStats->total_cost ?? 0);
+        $totalThisMonthServiceNetIncome = $totalThisMonthServiceGrossIncome - ($monthStats->total_cost ?? 0) - $monthExpenses;
+        $totalThisWeekServiceNetIncome = $totalThisWeekServiceGrossIncome - ($weekStats->total_cost ?? 0) - $weekExpenses;
+        $totalThisDayServiceNetIncome = $totalThisDayServiceGrossIncome - ($dayStats->total_cost ?? 0) - $dayExpenses;
 
         // Get top 20 services by net income (all time)
         $servicesByNetIncome = DB::table('service_details')
@@ -232,7 +268,10 @@ class ReportAnalysisController extends Controller
             'totalThisMonthLoss',
             'totalThisWeekLoss',
             'totalThisDayLoss',
-            'servicesByNetIncome'
+            'servicesByNetIncome',
+            'monthExpenses',
+            'weekExpenses',
+            'dayExpenses'
         ));
     }
 }

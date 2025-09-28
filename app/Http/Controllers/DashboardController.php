@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\Order;
 use App\Models\ServiceHistory;
 use Illuminate\Http\Request;
@@ -50,6 +51,9 @@ class DashboardController extends Controller
         });
 
         $totalServiceNetIncome = $totalServiceGrossIncome - $totalServiceCost;
+
+        $totalExpenses = Expense::sum('amount');
+        $totalNetIncome = $totalOrderNetIncome + $totalServiceNetIncome - $totalExpenses;
 
         $recentOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
@@ -133,7 +137,9 @@ class DashboardController extends Controller
             'recentServiceHistories',
             'monthlyIncomeData',
             'monthlyOrdersData',
-            'monthlyServiceHistoriesData'
+            'monthlyServiceHistoriesData',
+            'totalNetIncome',
+            'totalExpenses'
         ));
     }
 }

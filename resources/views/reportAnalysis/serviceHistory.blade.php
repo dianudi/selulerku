@@ -27,6 +27,10 @@
                                 ?? 0, 0, ',', '.') }}</div>
                         </div>
                         <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($monthExpenses ?? 0, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="stat">
                             <div class="stat-title">Total Loss</div>
                             <div class="stat-value text-error">Rp {{ number_format($totalThisMonthLoss ?? 0, 0, ',',
                                 '.') }}</div>
@@ -51,6 +55,10 @@
                                 0, 0, ',', '.') }}</div>
                         </div>
                         <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($weekExpenses ?? 0, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="stat">
                             <div class="stat-title">Total Loss</div>
                             <div class="stat-value text-error">Rp {{ number_format($totalThisWeekLoss ?? 0, 0, ',', '.')
                                 }}</div>
@@ -73,6 +81,10 @@
                             <div class="stat-title">Net Revenue</div>
                             <div class="stat-value text-secondary">Rp {{ number_format($totalThisDayServiceNetIncome ??
                                 0, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Total Expenses</div>
+                            <div class="stat-value">Rp {{ number_format($dayExpenses ?? 0, 0, ',', '.') }}</div>
                         </div>
                         <div class="stat">
                             <div class="stat-title">Total Loss</div>
