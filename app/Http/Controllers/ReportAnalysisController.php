@@ -78,9 +78,9 @@ class ReportAnalysisController extends Controller
 
         // Net Income
         $totalAllOrderNetIncome = $totalAllOrderGrossIncome - ($allStats->total_cost ?? 0) - $allExpenses;
-        $totalThisMonthOrderNetIncome = $totalThisMonthOrderGrossIncome - ($monthStats->total_cost ?? 0) - $monthExpenses;
-        $totalThisWeekOrderNetIncome = $totalThisWeekOrderGrossIncome - ($weekStats->total_cost ?? 0) - $weekExpenses;
-        $totalThisDayOrderNetIncome = $totalThisDayOrderGrossIncome - ($dayStats->total_cost ?? 0) - $dayExpenses;
+        $totalThisMonthOrderNetIncome = $totalThisMonthOrderGrossIncome - ($monthStats->total_cost ?? 0);
+        $totalThisWeekOrderNetIncome = $totalThisWeekOrderGrossIncome - ($weekStats->total_cost ?? 0);
+        $totalThisDayOrderNetIncome = $totalThisDayOrderGrossIncome - ($dayStats->total_cost ?? 0);
 
         // Average Gross Income
         $averageAllGrossIncome = $totalAllOrders > 0 ? $totalAllOrderGrossIncome / $totalAllOrders : 0;
@@ -235,9 +235,9 @@ class ReportAnalysisController extends Controller
         $totalThisDayServiceGrossIncome = $dayStats->gross_income ?? 0;
 
         // Net Income
-        $totalThisMonthServiceNetIncome = $totalThisMonthServiceGrossIncome - ($monthStats->total_cost ?? 0) - $monthExpenses;
-        $totalThisWeekServiceNetIncome = $totalThisWeekServiceGrossIncome - ($weekStats->total_cost ?? 0) - $weekExpenses;
-        $totalThisDayServiceNetIncome = $totalThisDayServiceGrossIncome - ($dayStats->total_cost ?? 0) - $dayExpenses;
+        $totalThisMonthServiceNetIncome = $totalThisMonthServiceGrossIncome - ($monthStats->total_cost ?? 0);
+        $totalThisWeekServiceNetIncome = $totalThisWeekServiceGrossIncome - ($weekStats->total_cost ?? 0);
+        $totalThisDayServiceNetIncome = $totalThisDayServiceGrossIncome - ($dayStats->total_cost ?? 0);
 
         // Get top 20 services by net income (all time)
         $servicesByNetIncome = DB::table('service_details')
