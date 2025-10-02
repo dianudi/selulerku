@@ -56,6 +56,7 @@
                             <div id="details-container" class="flex gap-2 flex-col">
                                 <!-- Dynamic details will be added here -->
                                 @foreach ($serviceHistory->details as $detail)
+                                <input type="hidden" name="details[{{ $loop->index }}][id]" value="{{ $detail->id }}">
                                 <div class="detail-item mb-2 min-w-full p-4 border rounded-md">
                                     <div class="flex justify-between items-center mb-2">
                                         <div class="text-sm font-bold">Detail</div>
@@ -87,8 +88,26 @@
                                     </fieldset>
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Cost Price</legend>
-                                        <input name="details[{{ $loop->index }}][cost_price]" value="{{ $detail->cost_price ?? 0 }}" type="number" class="input w-full" placeholder="Type here" />
-                                        <div id="details-{{ $loop->index }}-cost_price" class="text-red-500 text-xs mt-1"></div>
+                                        <input name="details[{{ $loop->index }}][cost_price]"
+                                            value="{{ $detail->cost_price ?? 0 }}" type="number" class="input w-full"
+                                            placeholder="Type here" />
+                                        <div id="details-{{ $loop->index }}-cost_price"
+                                            class="text-red-500 text-xs mt-1"></div>
+                                    </fieldset>
+                                    <fieldset class="fieldset">
+                                        <legend class="fieldset-legend">Image</legend>
+                                        <input name="details[{{ $loop->index }}][image]" type="file"
+                                            onchange=" document.getElementById('modalPreviewImage').src = window.URL.createObjectURL(this.files[0])"
+                                            class="file-input w-full" />
+                                        <label class="label">Optional, Max size 2MB</label>
+                                        <div id="details-{{ $loop->index }}-image" class="text-red-500 text-xs mt-1">
+                                        </div>
+                                        <div class="border max-w-24 min-h-24 max-h-24 mb-2">
+                                            <img id="modalPreviewImage"
+                                                src="{{asset('storage/' . $detail->image ?? '')}}"
+                                                class="w-full h-full object-cover object-center" id="preview"
+                                                alt="preview">
+                                        </div>
                                     </fieldset>
                                 </div>
                                 @endforeach

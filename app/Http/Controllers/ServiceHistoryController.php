@@ -8,6 +8,7 @@ use App\Models\ServiceHistory;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceHistoryController extends Controller
 {
@@ -71,6 +72,7 @@ class ServiceHistoryController extends Controller
                 'description' => $detail['description'],
                 'price' => $detail['price'],
                 'cost_price' => $detail['cost_price'],
+                'image' => $detail['image']->store('service-histories', 'public'),
             ];
         })->toArray());
 
@@ -116,15 +118,29 @@ class ServiceHistoryController extends Controller
             'total_revision' => $data['total_revision'],
             'status' => $data['status'],
         ]);
-        $serviceHistory->details()->delete();
-        $serviceHistory->details()->createMany(collect($data['details'])->map(function ($detail) {
-            return [
-                'kind' => $detail['kind'],
-                'description' => $detail['description'],
-                'price' => $detail['price'],
-                'cost_price' => $detail['cost_price'],
-            ];
-        })->toArray());
+        foreach ($data['details'] as $detailForm) {
+            $detail = $serviceHistory->details()->find($detailForm['id']);
+            if ($detail->image && $detailForm['image']) {
+                Storage::disk('public')->delete($detail->image);
+            }
+            $detail->update([
+                'kind' => $detailForm['kind'],
+                'description' => $detailForm['description'],
+                'price' => $detailForm['price'],
+                'cost_price' => $detailForm['cost_price'],
+                'image' => $detailForm['image']->store('service-histories', 'public'),
+            ]);
+        }
+        // $serviceHistory->details()->delete();
+        // $serviceHistory->details()->createMany(collect($data['details'])->map(function ($detail) {
+        //     return [
+        //         'kind' => $detail['kind'],
+        //         'description' => $detail['description'],
+        //         'price' => $detail['price'],
+        //         'cost_price' => $detail['cost_price'],
+        //         'image' => $detail['image']->store('service-histories', 'public'),
+        //     ];
+        // })->toArray());
 
         return response()->json(['message' => 'Service History updated successfully.']);
     }
@@ -137,7 +153,12 @@ class ServiceHistoryController extends Controller
         if ($serviceHistory->user_id !== Auth::user()->id && ! in_array(Auth::user()->role, ['admin', 'superadmin'])) {
             return abort(403);
         }
-        $serviceHistory->details()->delete();
+        foreach ($serviceHistory->details as $detail) {
+            if ($detail->image) {
+                Storage::disk('public')->delete($detail->image);
+            }
+            $detail->delete();
+        }
         $serviceHistory->delete();
 
         return redirect()->route('servicehistories.index')->with('success', 'Service History deleted successfully');

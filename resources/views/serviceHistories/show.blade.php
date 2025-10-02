@@ -52,7 +52,8 @@
                                         <th>Kind</th>
                                         <th>Description</th>
                                         <th>Price</th>
-                                    <th>Cost Price</th>
+                                        <th>Cost Price</th>
+                                        <th>Image</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -63,6 +64,15 @@
                                         <td>{{ $detail->description }}</td>
                                         <td>Rp. {{ number_format($detail->price, 0, ',', '.') }}</td>
                                         <td>Rp. {{ number_format($detail->cost_price, 0, ',', '.') }}</td>
+                                        <td>
+                                            @if ($detail->image)
+                                                <a href="{{ asset('storage/' . $detail->image) }}" target="_blank">
+                                                    <img src="{{ asset('storage/' . $detail->image) }}" alt="{{ $detail->kind }}" class="h-16 w-16 object-cover">
+                                                </a>
+                                            @else
+                                                No Image
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -72,17 +82,17 @@
                                         <th>Rp.
                                             {{ number_format($serviceHistory->details->sum('price'), 0, ',', '.') }}
                                         </th>
-                                        <th></th>
+                                        <th colspan="2"></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="3" class="text-right">Total Cost:</th>
-                                        <th></th>
+                                        <th colspan="4" class="text-right">Total Cost:</th>
                                         <th>Rp.
                                             {{ number_format($serviceHistory->details->sum('cost_price'), 0, ',', '.') }}
                                         </th>
+                                        <th></th>
                                     </tr>
                                     <tr>
-                                        <th colspan="3" class="text-right">Net Income:</th>
+                                        <th colspan="4" class="text-right">Net Income:</th>
                                         <th colspan="2">Rp.
                                             {{ number_format($serviceHistory->details->sum('price') - $serviceHistory->details->sum('cost_price'), 0, ',', '.') }}
                                         </th>
@@ -96,6 +106,11 @@
                             @foreach ($serviceHistory->details as $detail)
                             <div class="card bg-base-200 shadow-md mb-4">
                                 <div class="card-body">
+                                    @if ($detail->image)
+                                    <a href="#" data-src="{{ asset('storage/' . $detail->image) }}" class="mobile-image-trigger">
+                                        <img src="{{ asset('storage/' . $detail->image) }}" alt="{{ $detail->kind }}" class="mb-2 rounded-lg w-full object-cover">
+                                    </a>
+                                    @endif
                                     <h4 class="card-title">{{ $detail->kind }}</h4>
                                     <p>{{ $detail->description }}</p>
                                     <p class="text-right font-bold">Rp.
@@ -129,4 +144,33 @@
         </div>
     </div>
 </div>
+
+{{-- Modal for Image --}}
+<dialog id="image_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <img id="modal_image_content" src="" alt="Service Image" class="w-full">
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageTriggers = document.querySelectorAll('.mobile-image-trigger');
+        const modal = document.getElementById('image_modal');
+        const modalImage = document.getElementById('modal_image_content');
+
+        if (imageTriggers.length > 0 && modal && modalImage) {
+            imageTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const imageUrl = this.getAttribute('data-src');
+                    modalImage.setAttribute('src', imageUrl);
+                    modal.showModal();
+                });
+            });
+        }
+    });
+</script>
 @endsection

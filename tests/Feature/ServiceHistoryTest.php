@@ -8,6 +8,7 @@ use App\Models\ServiceHistory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Testing\File;
 use Tests\TestCase;
 
 class ServiceHistoryTest extends TestCase
@@ -46,6 +47,7 @@ class ServiceHistoryTest extends TestCase
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
+                    'image' => File::fake()->image('test.jpg'),
                 ],
             ],
         ], ['accept' => 'application/json']);
@@ -70,6 +72,7 @@ class ServiceHistoryTest extends TestCase
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
+                    'image' => File::fake()->image('test.jpg'),
                 ],
             ],
         ], ['referer' => route('servicehistories.create')]);
@@ -104,17 +107,19 @@ class ServiceHistoryTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
         $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
-        ServiceDetail::factory(5)->forServiceHistory($serviceHistory)->create();
+        $serviceDetail = ServiceDetail::factory()->forServiceHistory($serviceHistory)->create();
         $totalRevision = $this->faker->randomNumber();
         $response = $this->put(route('servicehistories.update', $serviceHistory), [
             'total_revision' => $totalRevision,
             'status' => $this->faker->randomElement(['pending', 'done']),
             'details' => [
                 [
+                    'id' => $serviceDetail->id,
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
+                    'image' => File::fake()->image('test.jpg'),
                 ],
             ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
@@ -130,15 +135,18 @@ class ServiceHistoryTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
         $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
+        $serviceDetail = ServiceDetail::factory()->forServiceHistory($serviceHistory)->create();
         $response = $this->put(route('servicehistories.update', $serviceHistory), [
             'total_revision' => $this->faker->randomNumber(),
             'status' => $this->faker->randomElement(['pending', 'done']),
             'details' => [
                 [
+                    'id' => $serviceDetail->id,
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
+                    'image' => File::fake()->image('test.jpg'),
                 ],
             ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
@@ -153,15 +161,18 @@ class ServiceHistoryTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
         $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
+        $serviceDetail = ServiceDetail::factory()->forServiceHistory($serviceHistory)->create();
         $response = $this->put(route('servicehistories.update', $serviceHistory), [
             'total_revision' => $this->faker->randomNumber(),
             'status' => $this->faker->randomElement(['pending', 'done']),
             'details' => [
                 [
+                    'id' => $serviceDetail->id,
                     'kind' => $this->faker->randomElement(['maintenance', 'repair']),
                     'description' => $this->faker->sentence(),
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
+                    'image' => File::fake()->image('test.jpg'),
                 ],
             ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);

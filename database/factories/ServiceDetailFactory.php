@@ -22,6 +22,7 @@ class ServiceDetailFactory extends Factory
             'kind' => $this->faker->randomElement(['maintenance', 'repair']),
             'description' => $this->faker->sentence(),
             'price' => $this->faker->numberBetween(1000, 10000),
+            'image' => $this->faker->imageUrl(),
         ];
     }
 

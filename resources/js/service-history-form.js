@@ -20,6 +20,9 @@ function addDetail() {
     detailItem.querySelector(
         "input[name='details[0][cost_price]']"
     ).name = `details[${detailIndex}][cost_price]`;
+    detailItem.querySelector(
+        "input[name='details[0][image]']"
+    ).name = `details[${detailIndex}][image]`;
 
     detailItem.querySelector(
         "#details-0-kind"
@@ -33,6 +36,9 @@ function addDetail() {
     detailItem.querySelector(
         "#details-0-cost_price"
     ).id = `details-${detailIndex}-cost_price`;
+    detailItem.querySelector(
+        "#details-0-image"
+    ).id = `details-${detailIndex}-image`;
 
     detailsContainer.appendChild(templateNode);
     detailIndex++;

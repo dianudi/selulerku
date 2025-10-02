@@ -25,10 +25,12 @@ class UpdateServiceHistoryRequest extends FormRequest
             'total_revision' => 'required|integer',
             'status' => 'required|string|in:pending,on_process,done',
             'details' => 'required|array',
+            'details.*.id' => 'required|exists:service_details,id',
             'details.*.kind' => 'required|string',
             'details.*.description' => 'required|string',
             'details.*.price' => 'required|integer',
             'details.*.cost_price' => 'required|integer|min:0',
+            'details.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
     }
 }
