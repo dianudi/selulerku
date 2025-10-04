@@ -1,6 +1,9 @@
+import imageCompression from "browser-image-compression";
+
 const detailsContainer = document.querySelector("#details-container");
 const addDetailBtn = document.querySelector("#add-detail-btn");
 const detailTemplate = document.querySelector("#detail-template");
+const compressedFiles = new Map();
 let detailIndex = 0;
 
 function addDetail() {
@@ -40,6 +43,29 @@ function addDetail() {
         "#details-0-image"
     ).id = `details-${detailIndex}-image`;
 
+    const inputImage = detailItem.querySelector(
+        `input[name="details[${detailIndex}][image]"]`
+    );
+    inputImage?.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            compressedFiles.delete(e.target.name);
+            return;
+        }
+        if (!file.type.startsWith("image/")) return;
+        try {
+            const compressedImageFile = await imageCompression(file, {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            });
+
+            compressedFiles.set(e.target.name, compressedImageFile);
+        } catch (error) {
+            console.error(error);
+            compressedFiles.delete(e.target.name);
+        }
+    });
     detailsContainer.appendChild(templateNode);
     detailIndex++;
 }
@@ -62,6 +88,10 @@ serviceHistoryForm.addEventListener("submit", (e) => {
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
+
+    for (const [name, file] of compressedFiles.entries()) {
+        data.set(name, file);
+    }
 
     // Clear previous errors
     document

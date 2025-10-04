@@ -67,7 +67,7 @@ class ProductController extends Controller
 
         $product = new Product($request->validated());
         $product->user_id = Auth::id();
-        $product->image = $request->has('image') ? $request->image->store('products', 'public') : null;
+        $product->image = $request->hasFile('image') ? $request->image->store('products', 'public') : null;
         $product->save();
         if ($request->acceptsHtml()) {
             return redirect()->route('products.index')->with('success', 'Product created successfully');
@@ -107,7 +107,10 @@ class ProductController extends Controller
         }
 
         $data = $request->validated();
-        if ($request->has('image')) {
+        if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
             $data['image'] = $request->image->store('products', 'public');
         }
         $product->update($data);

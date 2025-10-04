@@ -6,6 +6,7 @@ use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ProductCategoryController extends Controller
 {
@@ -47,7 +48,12 @@ class ProductCategoryController extends Controller
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory)
     {
         $productCategory->name = $request->input('name');
-        $productCategory->icon = $request->has('icon') ? $request->file('icon')->store('productCategories', 'public') : null;
+        if ($request->hasFile('icon')) {
+            if ($productCategory->icon) {
+                Storage::disk('public')->delete($productCategory->icon);
+            }
+            $productCategory->icon = $request->file('icon')->store('productCategories', 'public');
+        }
         $productCategory->save();
         if ($request->acceptsJson()) {
             return response()->json(['message' => 'Product category updated successfully.']);
@@ -63,6 +69,9 @@ class ProductCategoryController extends Controller
     {
         if ($productCategory->products()->count() > 0) {
             return redirect()->route('productcategories.index')->with('error', 'Product category cannot be deleted because it has associated products.');
+        }
+        if ($productCategory->icon) {
+            Storage::disk('public')->delete($productCategory->icon);
         }
         $productCategory->delete();
 

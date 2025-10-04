@@ -1,9 +1,44 @@
+import imageCompression from "browser-image-compression";
+
 const expenseForm = document.querySelector("#expenseForm");
+let compressedReceiptFile = null;
+
+const receiptInput = document.querySelector('input[name="receipt_image_path"]');
+receiptInput?.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+
+    try {
+        compressedReceiptFile = await imageCompression(file, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        });
+        const preview = document.querySelector("#modalPreviewReceipt");
+        if (preview) {
+            preview.src = await imageCompression.getDataUrlFromFile(
+                compressedReceiptFile
+            );
+        }
+    } catch (error) {
+        console.error(error);
+        compressedReceiptFile = null;
+    }
+});
 
 expenseForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     const data = new FormData(expenseForm);
     const action = expenseForm.getAttribute("action");
+
+    if (compressedReceiptFile) {
+        data.set(
+            "receipt_image_path",
+            compressedReceiptFile,
+            compressedReceiptFile.name
+        );
+    }
 
     // Clear previous errors
     document.querySelectorAll(".error-message").forEach((el) => {

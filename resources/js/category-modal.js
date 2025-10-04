@@ -1,4 +1,7 @@
+import imageCompression from "browser-image-compression";
+
 const updateCategoryClick = document.querySelectorAll(".updateCategoryClick");
+let compressedIconFile = null;
 
 updateCategoryClick?.forEach((click) => {
     click.addEventListener("click", (e) => {
@@ -12,6 +15,7 @@ updateCategoryClick?.forEach((click) => {
         document
             .querySelector("#modalPreview")
             .setAttribute("src", click.attributes["data-icon"].value);
+        compressedIconFile = null;
     });
 });
 
@@ -25,6 +29,28 @@ document.querySelector("#addNewCategory")?.addEventListener("click", () => {
         .setAttribute("value", "POST");
     document.querySelector("#modalInputName").setAttribute("value", "");
     document.querySelector("#modalPreview").setAttribute("src", "");
+    compressedIconFile = null;
+});
+
+const modalInputIcon = document.querySelector('input[name="icon"]');
+modalInputIcon?.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    try {
+        compressedIconFile = await imageCompression(file, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+        });
+        const preview = document.querySelector("#modalPreview");
+        preview.src = await imageCompression.getDataUrlFromFile(
+            compressedIconFile
+        );
+    } catch (error) {
+        console.error(error);
+        compressedIconFile = null;
+    }
 });
 
 const modalForm = document.querySelector("#modalForm");
@@ -32,6 +58,11 @@ modalForm?.addEventListener("submit", (e) => {
     if (modalForm) {
         e.preventDefault();
         const data = new FormData(modalForm);
+
+        if (compressedIconFile) {
+            data.set("icon", compressedIconFile, compressedIconFile.name);
+        }
+
         fetch(modalForm.getAttribute("action"), {
             method: "POST",
             body: data,

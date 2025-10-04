@@ -104,7 +104,7 @@
                             <td>{{$category->products()->count()}}</td>
                             <td class="flex gap-1">
                                 <div onclick="updateCategoryModal.showModal()" data-id="{{$category->id}}"
-                                    data-name="{{$category->name}}" data-icon="{{$category->icon}}"
+                                    data-name="{{$category->name}}" data-icon="{{'/storage/' . $category->icon}}"
                                     data-action="{{route('productcategories.update', $category->id)}}"
                                     class="btn btn-xs btn-success btn-outline text-white border-0 h-full updateCategoryClick">
                                     <i class="bi bi-pencil text-2xl"></i>

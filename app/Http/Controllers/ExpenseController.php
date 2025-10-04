@@ -85,7 +85,12 @@ class ExpenseController extends Controller
             return back()->with('error', 'Expense cannot be deleted because it is older than 2 days.');
         }
         $validated = $request->validated();
-        $validated['receipt_image_path'] = $request->hasFile('receipt_image_path') ? $request->file('receipt_image_path')->store('receipts', 'public') : $expense->receipt_image_path;
+        if ($request->hasFile('receipt_image_path')) {
+            if ($expense->receipt_image_path) {
+                Storage::disk('public')->delete($expense->receipt_image_path);
+            }
+            $validated['receipt_image_path'] = $request->file('receipt_image_path')->store('receipts', 'public');
+        }
         $expense->update($validated);
         if ($request->acceptsHtml()) {
             return redirect()->route('expenses.index')->with('success', 'Expense updated successfully');
