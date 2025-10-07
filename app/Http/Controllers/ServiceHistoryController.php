@@ -72,7 +72,7 @@ class ServiceHistoryController extends Controller
                 'description' => $detail['description'],
                 'price' => $detail['price'],
                 'cost_price' => $detail['cost_price'],
-                'image' => $detail['image']->store('service-histories', 'public'),
+                'image' => array_key_exists('image', $detail) ? $detail['image']->store('service-histories', 'public') : null,
             ];
         })->toArray());
 
@@ -120,7 +120,7 @@ class ServiceHistoryController extends Controller
         ]);
         foreach ($data['details'] as $detailForm) {
             $detail = $serviceHistory->details()->find($detailForm['id']);
-            if ($detail->image && $detailForm['image']) {
+            if ($detail->image && array_key_exists('image', $detailForm)) {
                 Storage::disk('public')->delete($detail->image);
             }
             $detail->update([
@@ -128,7 +128,7 @@ class ServiceHistoryController extends Controller
                 'description' => $detailForm['description'],
                 'price' => $detailForm['price'],
                 'cost_price' => $detailForm['cost_price'],
-                'image' => $detailForm['image']->store('service-histories', 'public'),
+                'image' => array_key_exists('image', $detailForm) ? $detailForm['image']->store('service-histories', 'public') : $detail->image,
             ]);
         }
         // $serviceHistory->details()->delete();

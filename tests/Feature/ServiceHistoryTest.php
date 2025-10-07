@@ -58,6 +58,30 @@ class ServiceHistoryTest extends TestCase
         ]);
     }
 
+    public function test_user_can_store_service_history_without_image()
+    {
+        $this->actingAs(User::factory()->create());
+        $customerId = Customer::factory()->create()->id;
+        $response = $this->post(route('servicehistories.store'), [
+            'customer_id' => $customerId,
+            'warranty_expired_at' => $this->faker->date(),
+            'status' => $this->faker->randomElement(['pending', 'done']),
+            'details' => [
+                [
+                    'kind' => $this->faker->randomElement(['maintenance', 'repair']),
+                    'description' => $this->faker->sentence(),
+                    'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
+                ],
+            ],
+        ], ['accept' => 'application/json']);
+        $response->assertJson(['message' => 'Service History created successfully.']);
+        // $response->assertRedirect(route('servicehistories.index'));
+        $this->assertDatabaseHas('service_histories', [
+            'customer_id' => $customerId,
+        ]);
+    }
+
     public function test_user_cannot_store_service_with_invalid_data()
     {
         $this->actingAs(User::factory()->create());
@@ -120,6 +144,33 @@ class ServiceHistoryTest extends TestCase
                     'price' => $this->faker->numberBetween(1000, 10000),
                     'cost_price' => $this->faker->numberBetween(1000, 10000),
                     'image' => File::fake()->image('test.jpg'),
+                ],
+            ],
+        ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);
+        $response->assertStatus(200);
+        $response->assertJson(['message' => 'Service History updated successfully.']);
+        $this->assertDatabaseHas('service_histories', [
+            'total_revision' => $totalRevision,
+        ]);
+    }
+
+    public function test_user_can_update_service_history_without_image()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $serviceHistory = ServiceHistory::factory()->forUser($user)->create();
+        $serviceDetail = ServiceDetail::factory()->forServiceHistory($serviceHistory)->create();
+        $totalRevision = $this->faker->randomNumber();
+        $response = $this->put(route('servicehistories.update', $serviceHistory), [
+            'total_revision' => $totalRevision,
+            'status' => $this->faker->randomElement(['pending', 'done']),
+            'details' => [
+                [
+                    'id' => $serviceDetail->id,
+                    'kind' => $this->faker->randomElement(['maintenance', 'repair']),
+                    'description' => $this->faker->sentence(),
+                    'price' => $this->faker->numberBetween(1000, 10000),
+                    'cost_price' => $this->faker->numberBetween(1000, 10000),
                 ],
             ],
         ], ['referer' => route('servicehistories.edit', $serviceHistory->id), 'accept' => 'application/json']);

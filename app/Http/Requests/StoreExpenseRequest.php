@@ -27,7 +27,7 @@ class StoreExpenseRequest extends FormRequest
             'amount' => 'required|numeric',
             'expense_date' => 'required|date',
             'payment_method' => 'required|string',
-            'receipt_image_path' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
+            'receipt_image_path' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
     }
 }

@@ -30,7 +30,7 @@ class UpdateServiceHistoryRequest extends FormRequest
             'details.*.description' => 'required|string',
             'details.*.price' => 'required|integer',
             'details.*.cost_price' => 'required|integer|min:0',
-            'details.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'details.*.image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ];
     }
 }

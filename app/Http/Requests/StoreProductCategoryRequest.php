@@ -23,7 +23,7 @@ class StoreProductCategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'icon' => 'file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'icon' => 'file|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ];
     }
 }

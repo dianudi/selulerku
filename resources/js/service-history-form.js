@@ -73,7 +73,7 @@ function addDetail() {
 // Add first detail on page load
 if (window.location.pathname === "/servicehistories/create") addDetail();
 
-addDetailBtn.addEventListener("click", addDetail);
+addDetailBtn?.addEventListener("click", addDetail);
 
 detailsContainer.addEventListener("click", (e) => {
     if (e.target.closest(".remove-detail-btn")) {

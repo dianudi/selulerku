@@ -50,8 +50,9 @@
                         <div class="flex-auto">
                             <div class="flex justify-between items-center mb-2">
                                 <h2 class="text-lg font-bold">Service Details</h2>
-                                <div id="add-detail-btn" role="button" class="btn btn-sm btn-primary">Add More Details
-                                </div>
+                                {{-- <div id="add-detail-btn" role="button" class="btn btn-sm btn-primary">Add More
+                                    Details
+                                </div> --}}
                             </div>
                             <div id="details-container" class="flex gap-2 flex-col">
                                 <!-- Dynamic details will be added here -->
@@ -60,9 +61,9 @@
                                 <div class="detail-item mb-2 min-w-full p-4 border rounded-md">
                                     <div class="flex justify-between items-center mb-2">
                                         <div class="text-sm font-bold">Detail</div>
-                                        <button type="button"
+                                        {{-- <button type="button"
                                             class="remove-detail-btn cursor-pointer hover:text-error text-red-700"><i
-                                                class="bi bi-x text-xl"></i></button>
+                                                class="bi bi-x text-xl"></i></button> --}}
                                     </div>
                                     <fieldset class="fieldset">
                                         <legend class="fieldset-legend">Kind</legend>
@@ -150,6 +151,18 @@
                             <input name="details[0][cost_price]" type="number" class="input w-full" value="0"
                                 placeholder="Type here" />
                             <div id="details-0-cost_price" class="text-red-500 text-xs mt-1"></div>
+                        </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Image</legend>
+                            <input name="details[0][image]" type="file"
+                                onchange=" document.getElementById('modalPreviewImage').src = window.URL.createObjectURL(this.files[0])"
+                                class="file-input w-full" />
+                            <label class="label">Optional, Max size 2MB</label>
+                            <div id="details-0-image" class="text-red-500 text-xs mt-1"></div>
+                            <div class="border max-w-24 min-h-24 max-h-24 mb-2">
+                                <img id="modalPreviewImage" class="w-full h-full object-cover object-center"
+                                    id="preview" src="" alt="preview">
+                            </div>
                         </fieldset>
                     </div>
                 </template>
