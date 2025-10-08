@@ -95,17 +95,18 @@
                             <table class="table w-full">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>Customer</th>
-                                        <th>Date</th>
+                                        <th>Product</th>
+                                        <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($recentOrders as $order)
                                     <tr>
-                                        <th>{{ $order->id }}</th>
                                         <td>{{ $order->customer->name }}</td>
-                                        <td>{{ $order->created_at->format('d F Y') }}</td>
+                                        <td class="truncate">{{$order->details->first()->product?->name }}</td>
+                                        <td>{{ number_format($order->details->sum('immutable_sell_price'), 0, ',', '.')
+                                            }}</td>
                                     </tr>
                                     @empty
                                     <tr>
@@ -126,17 +127,18 @@
                             <table class="table w-full">
                                 <thead>
                                     <tr>
-                                        <th></th>
                                         <th>Customer</th>
-                                        <th>Status</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse ($recentServiceHistories as $serviceHistory)
                                     <tr>
-                                        <th>{{ $serviceHistory->id }}</th>
                                         <td>{{ $serviceHistory->customer->name }}</td>
-                                        <td>{{ $serviceHistory->status }}</td>
+                                        <th class="truncate">{{ $serviceHistory->details->first()->description }}</th>
+                                        <td>{{ number_format($serviceHistory->details()->sum('price'), 0, ',', '.') }}
+                                        </td>
                                     </tr>
                                     @empty
                                     <tr>

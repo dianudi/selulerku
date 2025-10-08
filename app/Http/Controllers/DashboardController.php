@@ -16,43 +16,45 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $totalOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+        $totalOrders = Order::where('status', 'paid')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->count();
-        $totalOrderGrossIncome = Order::with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
+
+        $totalOrderGrossIncome = Order::where('status', 'paid')->with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->get()->sum(function ($order) {
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->get()->sum(function ($order) {
             return $order->details->sum(function ($detail) {
                 return $detail->immutable_sell_price;
             });
         });
-        $totalOrderNetIncome = $totalOrderGrossIncome - Order::with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+
+        $totalOrderNetIncome = $totalOrderGrossIncome - Order::where('status', 'paid')->with('details.product')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->get()->sum(function ($order) {
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->get()->sum(function ($order) {
             return $order->details->sum(function ($detail) {
                 return $detail->immutable_buy_price;
             });
         });
 
-        $totalServiceHistories = ServiceHistory::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
+        $totalServiceHistories = ServiceHistory::where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->count();
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
 
         $totalServiceGrossIncome = ServiceHistory::with('details')->where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->get()->sum(function ($serviceHistory) {
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->get()->sum(function ($serviceHistory) {
             return $serviceHistory->details->sum('price');
         });
 
         $totalServiceCost = ServiceHistory::with('details')->where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('user_id', Auth::user()->id);
-        })->get()->sum(function ($serviceHistory) {
+        })->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->get()->sum(function ($serviceHistory) {
             return $serviceHistory->details->sum('cost_price');
         });
 
         $totalServiceNetIncome = $totalServiceGrossIncome - $totalServiceCost;
 
-        $totalExpenses = Expense::sum('amount');
+        $totalExpenses = Expense::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
         $totalNetIncome = $totalOrderNetIncome + $totalServiceNetIncome - $totalExpenses;
 
         $recentOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {

@@ -66,8 +66,8 @@ class ReportAnalysisController extends Controller
 
         // Order Analysis
         $totalAllOrders = Order::count();
-        $totalThisMonthOrders = Order::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
-        $totalThisWeekOrders = Order::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $totalThisMonthOrders = Order::where('status', 'paid')->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
+        $totalThisWeekOrders = Order::where('status', 'paid')->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
         $totalThisDayOrders = Order::whereDate('created_at', today())->count();
 
         // Gross Income
@@ -95,24 +95,24 @@ class ReportAnalysisController extends Controller
         $averageThisDayNetIncome = $totalThisDayOrders > 0 ? $totalThisDayOrderNetIncome / $totalThisDayOrders : 0;
 
         // Max Gross Income
-        $maxGrossIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
-        $maxGrossIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
-        $maxGrossIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereDate('orders.created_at', today())->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
+        $maxGrossIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
+        $maxGrossIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
+        $maxGrossIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereDate('orders.created_at', today())->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderByDesc('order_gross')->first()?->order_gross;
 
         // Min Gross Income
-        $minGrossIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
-        $minGrossIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
-        $minGrossIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereDate('orders.created_at', today())->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
+        $minGrossIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
+        $minGrossIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
+        $minGrossIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereDate('orders.created_at', today())->selectRaw('SUM(order_details.immutable_sell_price) as order_gross')->groupBy('order_details.order_id')->orderBy('order_gross', 'asc')->first()?->order_gross;
 
         // Max Net Income
-        $maxNetIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
-        $maxNetIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
-        $maxNetIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereDate('orders.created_at', today())->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
+        $maxNetIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
+        $maxNetIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
+        $maxNetIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereDate('orders.created_at', today())->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderByDesc('order_net_income')->first()?->order_net_income;
 
         // Min Net Income
-        $minNetIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
-        $minNetIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
-        $minNetIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->whereDate('orders.created_at', today())->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
+        $minNetIncomeThisMonth = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfMonth(), now()->endOfMonth()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
+        $minNetIncomeThisWeek = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereBetween('orders.created_at', [now()->startOfWeek(), now()->endOfWeek()])->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
+        $minNetIncomeThisDay = DB::table('order_details')->join('orders', 'order_details.order_id', '=', 'orders.id')->where('status', 'paid')->whereDate('orders.created_at', today())->selectRaw('SUM((order_details.immutable_sell_price - order_details.immutable_buy_price)) as order_net_income')->groupBy('order_details.order_id')->orderBy('order_net_income', 'asc')->first()?->order_net_income;
 
         // list of best selling product
         $bestSellingProducts = OrderDetail::select(
@@ -173,6 +173,7 @@ class ReportAnalysisController extends Controller
             return DB::table('service_details')
                 ->join('service_histories', 'service_details.service_history_id', '=', 'service_histories.id')
                 ->where($dateQuery)
+                ->where('service_histories.status', 'done')
                 ->select(
                     DB::raw('SUM(service_details.price) as gross_income'),
                     DB::raw('SUM(service_details.cost_price) as total_cost')
@@ -225,9 +226,9 @@ class ReportAnalysisController extends Controller
         $totalThisDayLoss = $calculateLoss($thisDayQuery);
 
         // Service History Analysis
-        $totalThisMonthServices = ServiceHistory::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
-        $totalThisWeekServices = ServiceHistory::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
-        $totalThisDayServices = ServiceHistory::whereDate('created_at', today())->count();
+        $totalThisMonthServices = ServiceHistory::where('status', 'done')->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count();
+        $totalThisWeekServices = ServiceHistory::where('status', 'done')->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        $totalThisDayServices = ServiceHistory::where('status', 'done')->whereDate('created_at', today())->count();
 
         // Gross Income
         $totalThisMonthServiceGrossIncome = $monthStats->gross_income ?? 0;

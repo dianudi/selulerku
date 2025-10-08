@@ -24,7 +24,7 @@ class OrderController extends Controller
             $query->where('user_id', Auth::id());
         })->orderBy('created_at', 'desc')->paginate(15);
 
-        $userOrders = Order::when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
+        $userOrders = Order::where('status', 'paid')->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::id());
         });
         $totalGrossRevenue = OrderDetail::whereIn('order_id', $userOrders->clone()->where('status', 'paid')->pluck('id'))->sum('immutable_sell_price');
