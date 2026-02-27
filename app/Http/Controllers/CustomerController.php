@@ -33,7 +33,7 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required',
-            'phone_number' => 'required',
+            'phone_number' => 'required|unique:customers',
             'address' => 'required',
         ]);
         $validated['user_id'] = Auth::id();
