@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\ServiceDetailFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceDetail extends Model
 {
-    /** @use HasFactory<\Database\Factories\ServiceDetailFactory> */
+    /** @use HasFactory<ServiceDetailFactory> */
     use HasFactory;
 
     protected $guarded = ['id', 'created_at', 'updated_at'];

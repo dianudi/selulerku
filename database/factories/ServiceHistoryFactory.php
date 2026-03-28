@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\ServiceHistory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ServiceHistory>
+ * @extends Factory<ServiceHistory>
  */
 class ServiceHistoryFactory extends Factory
 {
