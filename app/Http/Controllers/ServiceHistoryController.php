@@ -28,7 +28,7 @@ class ServiceHistoryController extends Controller
             })->orWhere('invoice_number', 'like', '%'.$request->search.'%');
         }
 
-        $serviceHistories = $serviceHistories->orderBy('created_at', 'desc')->paginate(10);
+        $serviceHistories = $serviceHistories->orderBy('created_at', 'desc')->simplePaginate(10)->withQueryString();
 
         $pendingCount = ServiceHistory::where('status', 'pending')->when(! in_array(Auth::user()->role, ['admin', 'superadmin']), function ($query) {
             $query->where('user_id', Auth::user()->id);
@@ -60,7 +60,7 @@ class ServiceHistoryController extends Controller
         $serviceHistory = new ServiceHistory([
             'user_id' => Auth::user()->id,
             'customer_id' => $data['customer_id'],
-            'invoice_number' => 'INV-'.$data['customer_id'].'-'.now()->format('Y/m/d').'-'.rand(1000, 9999).'-'.rand(1000, 9999),
+            'invoice_number' => 'INV-'.$data['customer_id'].'-'.now()->format('Y/m/d').'-'.ServiceHistory::count() + 1,
             'warranty_expired_at' => $data['warranty_expired_at'],
             'status' => $data['status'],
         ]);

@@ -15,7 +15,7 @@
                         <div class="flex-auto">
                             <h2 class="text-lg font-bold">Service Note</h2>
                             <div class="my-1 text-sm font-bold">Customer</div>
-                            <div class="border p-2 rounded-md min-h-[40px] flex items-center justify-between">
+                            <div class="border p-2 rounded-md min-h-10 flex items-center justify-between">
                                 <span id="selected-customer-name" class="text-gray-500">No customer selected</span>
                                 <button type="button" onclick="customer_selection_modal.showModal()"
                                     class="btn btn-sm">Select Customer</button>
@@ -81,20 +81,18 @@
                         </fieldset>
                         <fieldset class="fieldset">
                             <legend class="fieldset-legend">Cost Price</legend>
-                            <input name="details[0][cost_price]" type="number" class="input w-full"
+                            <input name="details[0][cost_price]" value="0" type="number" class="input w-full"
                                 placeholder="Type here" />
                             <div id="details-0-cost_price" class="text-red-500 text-xs mt-1"></div>
                         </fieldset>
                         <fieldset class="fieldset">
                             <legend class="fieldset-legend">Image</legend>
-                            <input name="details[0][image]" type="file"
-                                onchange=" document.getElementById('modalPreviewImage').src = window.URL.createObjectURL(this.files[0])"
-                                class="file-input w-full" />
+                            <input name="details[0][image]" type="file" class="file-input w-full" />
                             <label class="label">Optional, Max size 2MB</label>
                             <div id="details-0-image" class="text-red-500 text-xs mt-1"></div>
                             <div class="border max-w-24 min-h-24 max-h-24 mb-2">
-                                <img id="modalPreviewImage" class="w-full h-full object-cover object-center"
-                                    id="preview" src="" alt="preview">
+                                <img class="image-preview w-full h-full object-cover object-center" src=""
+                                    alt="preview">
                             </div>
                         </fieldset>
                     </div>

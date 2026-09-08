@@ -59,9 +59,9 @@
             <h1>{{ config('app.name', 'SelulerKu') }}</h1>
             <hr>
             <p>{{ setting('receipt_address', 'Unset') }}</p>
+            <p>{{ $serviceHistory->invoice_number }}</p>
             <p>{{ $serviceHistory->created_at->format('d/m/Y H:i') }}</p>
             <p>Cashier: {{ $serviceHistory->user->name }}</p>
-            <p>Invoice: {{ $serviceHistory->invoice_number }}</p>
             <p>Customer: {{ $serviceHistory->customer->name }}</p>
             <p>Warranty Expired: {{ $serviceHistory->warranty_expired_at->format('d/m/Y') }}</p>
         </div>
@@ -102,10 +102,6 @@
             <p>{{ setting('receipt_footer', 'Thank you for your purchase!') }}</p>
         </div>
     </div>
-</body>
-
-</html>v>
-</div>
 </body>
 
 </html>
