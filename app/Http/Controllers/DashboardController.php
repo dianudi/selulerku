@@ -66,8 +66,8 @@ class DashboardController extends Controller
 
         $dbDriver = config('database.connections.'.config('database.default').'.driver');
 
-        $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", orders.created_at)' : 'MONTH(orders.created_at)';
-        $monthlyIncome = Order::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
+        $monthExpression = $dbDriver === 'sqlite' ? 'CAST(strftime("%m", orders.created_at) AS INTEGER)' : 'MONTH(orders.created_at)';
+        $monthlyIncome = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('orders.user_id', Auth::user()->id);
         })->select(
             DB::raw('sum(order_details.immutable_sell_price) as total'),
@@ -79,8 +79,8 @@ class DashboardController extends Controller
             ->groupBy('month')
             ->pluck('total', 'month');
 
-        $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", service_histories.created_at)' : 'MONTH(service_histories.created_at)';
-        $monthlyServiceIncome = ServiceHistory::where('status', 'done')->when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
+        $monthExpression = $dbDriver === 'sqlite' ? 'CAST(strftime("%m", service_histories.created_at) AS INTEGER)' : 'MONTH(service_histories.created_at)';
+        $monthlyServiceIncome = ServiceHistory::where('status', 'done')->when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('service_histories.user_id', Auth::user()->id);
         })->select(
             DB::raw('sum(service_details.price) as total'),
@@ -96,8 +96,8 @@ class DashboardController extends Controller
             $monthlyIncomeData[$i] = $monthlyIncome->get($i, 0) + $monthlyServiceIncome->get($i, 0);
         }
 
-        $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", created_at)' : 'MONTH(created_at)';
-        $monthlyOrders = Order::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
+        $monthExpression = $dbDriver === 'sqlite' ? 'CAST(strftime("%m", created_at) AS INTEGER)' : 'MONTH(created_at)';
+        $monthlyOrders = Order::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('orders.user_id', Auth::user()->id);
         })->select(
             DB::raw('count(id) as total'),
@@ -112,8 +112,8 @@ class DashboardController extends Controller
             $monthlyOrdersData[$i] = $monthlyOrders->get($i, 0);
         }
 
-        $monthExpression = $dbDriver === 'sqlite' ? 'strftime("%m", created_at)' : 'MONTH(created_at)';
-        $monthlyServiceHistories = ServiceHistory::when(in_array(Auth::user()->role, ['adnin', 'cashier']), function ($query) {
+        $monthExpression = $dbDriver === 'sqlite' ? 'CAST(strftime("%m", created_at) AS INTEGER)' : 'MONTH(created_at)';
+        $monthlyServiceHistories = ServiceHistory::when(in_array(Auth::user()->role, ['admin', 'cashier']), function ($query) {
             return $query->where('service_histories.user_id', Auth::user()->id);
         })->select(
             DB::raw('count(id) as total'),
