@@ -37,7 +37,12 @@ class ProductController extends Controller
             return $product->orderDetails->sum('immutable_sell_price');
         });
         $lowStockCount = Product::where('quantity', '<', 5)->count();
-        $products = $request->has('search') ? Product::where('name', 'like', '%'.$request->search.'%')->orderBy('name', 'asc')->paginate(15) : Product::orderBy('name', 'asc')->paginate(15);
+        $products = Product::query()
+            ->when($request->has('search'), fn ($q) => $q->where('name', 'like', '%'.$request->search.'%'))
+            ->when($request->query('sort') === 'created', fn ($q) => $q->orderBy('created_at', 'desc'))
+            ->when($request->query('sort') === 'updated', fn ($q) => $q->orderBy('updated_at', 'desc'))
+            ->when(! in_array($request->query('sort'), ['created', 'updated']) && ! $request->has('search'), fn ($q) => $q->orderBy('name', 'asc'))
+            ->paginate(15);
 
         return view('products.index', compact('products', 'productCount', 'productSoldCountToday', 'productSoldCountYesterday', 'productProfitToday', 'productProfitYesterday', 'lowStockCount'));
     }
@@ -70,10 +75,10 @@ class ProductController extends Controller
         $product->image = $request->hasFile('image') ? $request->image->store('products', 'public') : null;
         $product->save();
         if ($request->acceptsHtml()) {
-            return redirect()->route('products.index')->with('success', 'Product created successfully');
+            return redirect()->route('products.index', ['sort' => 'created'])->with('success', 'Product created successfully');
         }
 
-        return response()->json(['message' => 'Product created successfully.']);
+        return response()->json(['message' => 'Product created successfully.', 'redirect' => route('products.index', ['sort' => 'created'])]);
     }
 
     /**
@@ -115,10 +120,10 @@ class ProductController extends Controller
         }
         $product->update($data);
         if ($request->acceptsHtml()) {
-            return redirect()->route('products.index')->with('success', 'Product updated successfully');
+            return redirect()->route('products.index', ['sort' => 'updated'])->with('success', 'Product updated successfully');
         }
 
-        return response()->json(['message' => 'Product updated successfully.']);
+        return response()->json(['message' => 'Product updated successfully.', 'redirect' => route('products.index', ['sort' => 'updated'])]);
     }
 
     /**

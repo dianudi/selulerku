@@ -60,7 +60,9 @@ productForm?.addEventListener("submit", (e) => {
             return response.json();
         })
         .then((data) => {
-            if (data.message) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else if (data.message) {
                 window.location.href = "/products";
             }
         })

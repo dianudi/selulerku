@@ -30,6 +30,22 @@ class ProductTest extends TestCase
         $response->assertViewIs('products.index');
     }
 
+    public function test_products_index_sorts_by_created_or_updated()
+    {
+        $this->actingAs(User::factory()->create());
+        $older = Product::factory()->create(['name' => 'older', 'created_at' => now()->subDays(2)]);
+        $newer = Product::factory()->create(['name' => 'newer', 'created_at' => now()]);
+
+        $this->get(route('products.index', ['sort' => 'created']))
+            ->assertSeeInOrder([$newer->name, $older->name]);
+
+        $older->update(['updated_at' => now()]);
+        $newer->update(['updated_at' => now()->subHour()]);
+
+        $this->get(route('products.index', ['sort' => 'updated']))
+            ->assertSeeInOrder([$older->name, $newer->name]);
+    }
+
     public function test_user_can_visit_create_product_page()
     {
         $this->actingAs(User::factory()->create());
@@ -52,7 +68,7 @@ class ProductTest extends TestCase
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'text/html']);
         $response->assertStatus(302);
-        $response->assertRedirect(route('products.index'));
+        $response->assertRedirect(route('products.index', ['sort' => 'created']));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('products', ['name' => 'test']);
         // ajax
@@ -67,7 +83,10 @@ class ProductTest extends TestCase
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'application/json']);
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'Product created successfully.']);
+        $response->assertJson([
+            'message' => 'Product created successfully.',
+            'redirect' => route('products.index', ['sort' => 'created']),
+        ]);
         $this->assertDatabaseHas('products', ['name' => 'testajax']);
     }
 
@@ -113,7 +132,7 @@ class ProductTest extends TestCase
             'product_category_id' => ProductCategory::factory()->create()->id,
         ]);
         $response->assertStatus(302);
-        $response->assertRedirect(route('products.index'));
+        $response->assertRedirect(route('products.index', ['sort' => 'updated']));
         $response->assertSessionHas('success');
         $this->assertDatabaseHas('products', ['name' => 'updated']);
         // ajax
@@ -128,7 +147,10 @@ class ProductTest extends TestCase
             'product_category_id' => ProductCategory::factory()->create()->id,
         ], ['accept' => 'application/json']);
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'Product updated successfully.']);
+        $response->assertJson([
+            'message' => 'Product updated successfully.',
+            'redirect' => route('products.index', ['sort' => 'updated']),
+        ]);
         $this->assertDatabaseHas('products', ['name' => 'updatedajax']);
     }
 
