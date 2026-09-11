@@ -157,7 +157,8 @@
                         <h2 class="text-lg font-bold">Carts</h2>
                         <button type="button" id="reset-cart-button" class="btn btn-sm btn-neutral">Reset</button>
                     </div>
-                    <form id="orderForm" action="{{route('orders.store')}}" method="POST">
+                    <form id="orderForm" action="{{route('orders.store')}}" method="POST"
+                        data-redirect="{{route('orders.index')}}">
                         @csrf
                         <ul id="cart-items" class="list bg-base-100 rounded-box shadow-md">
                             <!-- Cart items will be injected here by JavaScript -->
@@ -192,6 +193,7 @@
                             </select>
                         </fieldset>
                         <input type="hidden" name="customer_id" id="customer_id_hidden">
+                        <div id="order-errors" class="text-red-500 text-sm space-y-1 p-2"></div>
                         <button id="checkout" type="submit"
                             class="btn btn-primary w-full mx-auto block md:max-w-xs my-3">Checkout</button>
                     </form>

@@ -81,7 +81,15 @@ class OrderController extends Controller
                 $order->details()->createMany($details);
             });
         } catch (\Throwable $th) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $th->getMessage()], 422);
+            }
+
             return redirect()->back()->with('error', $th->getMessage());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Order created successfully']);
         }
 
         return redirect()->route('orders.index')->with('success', 'Order created successfully');

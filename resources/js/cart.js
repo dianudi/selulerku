@@ -97,7 +97,7 @@ function updateTotals(subtotal) {
     const total = subtotal; // Add logic for tax or shipping if needed
     if (cartSubtotalElement)
         cartSubtotalElement.textContent = `Rp. ${subtotal.toLocaleString(
-            "id-ID"
+            "id-ID",
         )}`;
     if (cartTotalElement)
         cartTotalElement.textContent = `Rp. ${total.toLocaleString("id-ID")}`;
@@ -138,5 +138,92 @@ if (resetButton) {
     });
 }
 
+// Checkout via AJAX
+const orderForm = document.getElementById("orderForm");
+if (orderForm) {
+    orderForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const orderErrorsContainer = document.getElementById("order-errors");
+        if (orderErrorsContainer) orderErrorsContainer.innerHTML = "";
+
+        // Clear hidden details inputs so FormData picks up the current cart state
+        orderForm
+            .querySelectorAll("input[name^='details']")
+            .forEach((input) => input.remove());
+
+        const cart = getCart();
+        if (cart.length === 0) {
+            if (orderErrorsContainer) {
+                orderErrorsContainer.innerHTML =
+                    "<div>Your cart is empty.</div>";
+            }
+            return;
+        }
+
+        // Add hidden inputs for each cart item
+        cart.forEach((item, index) => {
+            const productIdInput = document.createElement("input");
+            productIdInput.type = "hidden";
+            productIdInput.name = `details[${index}][product_id]`;
+            productIdInput.value = item.id;
+            const quantityInput = document.createElement("input");
+            quantityInput.type = "hidden";
+            quantityInput.name = `details[${index}][quantity]`;
+            quantityInput.value = item.quantity;
+            orderForm.appendChild(productIdInput);
+            orderForm.appendChild(quantityInput);
+        });
+
+        if (checkoutButton) {
+            checkoutButton.disabled = true;
+            checkoutButton.dataset.originalText = checkoutButton.textContent;
+            checkoutButton.textContent = "Processing...";
+        }
+
+        const formData = new FormData(orderForm);
+
+        try {
+            const response = await fetch(orderForm.action, {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (data.errors) {
+                    const errorList = Object.values(data.errors).flat();
+                    if (orderErrorsContainer) {
+                        orderErrorsContainer.innerHTML = errorList
+                            .map((msg) => `<div>${msg}</div>`)
+                            .join("");
+                    }
+                } else if (data.message && orderErrorsContainer) {
+                    orderErrorsContainer.innerHTML = `<div>${data.message}</div>`;
+                }
+                return;
+            }
+
+            localStorage.removeItem("shopping_cart");
+            window.location.href = orderForm.dataset.redirect;
+        } catch (error) {
+            if (orderErrorsContainer) {
+                orderErrorsContainer.innerHTML =
+                    "<div>Something went wrong. Please try again.</div>";
+            }
+        } finally {
+            if (checkoutButton) {
+                checkoutButton.disabled = false;
+                checkoutButton.textContent =
+                    checkoutButton.dataset.originalText || "Checkout";
+            }
+        }
+    });
+}
 // Initial render
 renderCart();
